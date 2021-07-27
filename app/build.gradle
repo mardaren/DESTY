@@ -1,6 +1,9 @@
 plugins {
     id 'com.android.application'
 }
+def localPropertiesFile = rootProject.file("local.properties")
+def localProperties = new Properties()
+localProperties.load(new FileInputStream(localPropertiesFile))
 
 android {
     compileSdkVersion 30
@@ -12,7 +15,7 @@ android {
         targetSdkVersion 30
         versionCode 1
         versionName "1.0"
-
+        buildConfigField("String", "DB_URL", "\""+localProperties['db_url']+"\"")
         testInstrumentationRunner "androidx.test.runner.AndroidJUnitRunner"
     }
 
