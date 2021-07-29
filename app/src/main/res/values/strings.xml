@@ -1,6 +1,7 @@
 <resources>
     <string name="app_name">DESTY</string>
     <string name="title_activity_main">MainActivity</string>
-    <string name="tab_text_1">Tab 1</string>
-    <string name="tab_text_2">Tab 2</string>
+    <string name="tab_text_1">Home</string>
+    <string name="tab_text_2">Search</string>
+    <string name="tab_text_3">Profile</string>
 </resources>
