@@ -14,11 +14,12 @@
         android:supportsRtl="true"
         android:theme="@style/Theme.DESTY">
         <activity
-            android:name="com.example.desty.MainActivity"
+            android:name=".MainActivity"
             android:label="@string/title_activity_main"
-            android:theme="@style/Theme.DESTY.NoActionBar" >
+            android:theme="@style/Theme.DESTY.NoActionBar">
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
+
                 <category android:name="android.intent.category.LAUNCHER" />
             </intent-filter>
         </activity>
