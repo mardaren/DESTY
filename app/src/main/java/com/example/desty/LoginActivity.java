@@ -56,7 +56,7 @@ public class LoginActivity extends AppCompatActivity {
 
         try {
             conn_url = BuildConfig.DB_URL;
-            Class.forName("net.sourceforge.jtds.jdbc.Driver");
+            Class.forName("com.microsoft.sqlserver.jdbc.SQLServerDriver");
             connection = DriverManager.getConnection(conn_url);
             if (connection != null) {
                 System.out.println("Connected");
