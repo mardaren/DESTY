@@ -4,6 +4,7 @@ import androidx.appcompat.app.AppCompatActivity;
 
 import android.content.Intent;
 import android.os.Bundle;
+import android.os.StrictMode;
 import android.util.Log;
 import android.view.View;
 import android.widget.Button;
@@ -15,6 +16,9 @@ import java.math.BigInteger;
 import java.security.MessageDigest;
 import java.security.NoSuchAlgorithmException;
 import java.security.SecureRandom;
+import java.sql.Connection;
+import java.sql.DriverManager;
+import java.sql.SQLException;
 import java.util.Arrays;
 import java.util.logging.Level;
 import java.util.logging.Logger;
@@ -23,9 +27,13 @@ public class LoginActivity extends AppCompatActivity {
     EditText user_name,user_mail,passwd;
     Button login_button;
     TextView reg_text;
+    Connection db_conn=null;
     @Override
     protected void onCreate(Bundle savedInstanceState) {
+        StrictMode.ThreadPolicy policy = new StrictMode.ThreadPolicy.Builder().permitAll().build();
+        StrictMode.setThreadPolicy(policy);
         super.onCreate(savedInstanceState);
+        db_conn = initializeConn();
         setContentView(R.layout.activity_login);
         user_mail = this.findViewById(R.id.useremail);
         user_name = this.findViewById(R.id.username);
@@ -40,6 +48,28 @@ public class LoginActivity extends AppCompatActivity {
             else if(txt.equals(getResources().getString(R.string.register_now)))
                 signup();
         });
+    }
+
+    public Connection initializeConn(){
+        Connection connection = null;
+        String conn_url;
+
+        try {
+            conn_url = BuildConfig.DB_URL;
+            Class.forName("net.sourceforge.jtds.jdbc.Driver");
+            connection = DriverManager.getConnection(conn_url);
+            if (connection != null) {
+                System.out.println("Connected");
+            }
+            else
+                System.out.println("Not connected");
+
+        } catch (SQLException throwable) {
+            throwable.printStackTrace();
+        } catch (ClassNotFoundException e) {
+            e.printStackTrace();
+        }
+        return connection;
     }
 
     public void login(){
@@ -66,7 +96,7 @@ public class LoginActivity extends AppCompatActivity {
         try {
             MessageDigest md = MessageDigest.getInstance("SHA-512");
             md.update(salt);
-            byte data[] = md.digest(passwd.getBytes());
+            byte[] data = md.digest(passwd.getBytes());
             md.reset();
             return data;
         } catch (NoSuchAlgorithmException e) {
