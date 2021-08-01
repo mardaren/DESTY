@@ -18,10 +18,15 @@ import java.security.NoSuchAlgorithmException;
 import java.security.SecureRandom;
 import java.sql.Connection;
 import java.sql.DriverManager;
+import java.sql.PreparedStatement;
+import java.sql.ResultSet;
 import java.sql.SQLException;
+import java.sql.Statement;
 import java.util.Arrays;
 import java.util.logging.Level;
 import java.util.logging.Logger;
+import javax.sql.DataSource;
+
 
 public class LoginActivity extends AppCompatActivity {
     EditText user_name,user_mail,passwd;
@@ -56,10 +61,11 @@ public class LoginActivity extends AppCompatActivity {
 
         try {
             conn_url = BuildConfig.DB_URL;
-            Class.forName("com.microsoft.sqlserver.jdbc.SQLServerDriver");
+            Class.forName("net.sourceforge.jtds.jdbc.Driver");
             connection = DriverManager.getConnection(conn_url);
             if (connection != null) {
                 System.out.println("Connected");
+                System.out.println(connection.getMetaData());
             }
             else
                 System.out.println("Not connected");
@@ -118,12 +124,30 @@ public class LoginActivity extends AppCompatActivity {
         String str_salt = byteToHex(salt);
         String str_passwd = byteToHex(hashedPasswd);
 
+        Statement statement;
+        String query = "SELECT max(id) FROM [dbo].[User]";
+        int status = -1;
+        try {
+            statement = db_conn.createStatement();
+            ResultSet resultSet = statement.executeQuery(query);
+            int id = 0;
+            while(resultSet.next()){
+                id = resultSet.getInt(1);
+            }
+            id++;
+            PreparedStatement insertSt=db_conn.prepareStatement("INSERT INTO [dbo].[User] values(?,?,?,?,?)");
+            insertSt.setObject(1,id);
+            insertSt.setObject(2,username);
+            insertSt.setObject(3,mail);
+            insertSt.setObject(4,str_passwd);
+            insertSt.setObject(5,str_salt);
+            status = insertSt.executeUpdate();
+            System.out.println(status);
+        } catch (SQLException throwables) {
+            throwables.printStackTrace();
+        }
 
-        //Create new user here with str_salt, str_passwd and username,mail. Store in DB
-
-        boolean success = true; // DB'de düzgün oluşturulduysa true; oluşturulamadıysa false
-
-        if (success){
+        if (status>0){
             Toast.makeText(this,"Sign up Successful!",Toast.LENGTH_LONG).show();
             Intent i = new Intent(LoginActivity.this,MainActivity.class);
             startActivity(i);
