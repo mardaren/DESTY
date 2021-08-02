@@ -25,7 +25,6 @@ import java.sql.Statement;
 import java.util.Arrays;
 import java.util.logging.Level;
 import java.util.logging.Logger;
-import javax.sql.DataSource;
 
 
 public class LoginActivity extends AppCompatActivity {
@@ -64,11 +63,10 @@ public class LoginActivity extends AppCompatActivity {
             Class.forName("net.sourceforge.jtds.jdbc.Driver");
             connection = DriverManager.getConnection(conn_url);
             if (connection != null) {
-                System.out.println("Connected");
-                System.out.println(connection.getMetaData());
+                Log.i("Connection Status","Connected");
             }
             else
-                System.out.println("Not connected");
+                Log.i("Connection Status","Not Connected");
 
         } catch (SQLException throwable) {
             throwable.printStackTrace();
@@ -142,7 +140,6 @@ public class LoginActivity extends AppCompatActivity {
             insertSt.setObject(4,str_passwd);
             insertSt.setObject(5,str_salt);
             status = insertSt.executeUpdate();
-            System.out.println(status);
         } catch (SQLException throwables) {
             throwables.printStackTrace();
         }
@@ -159,11 +156,28 @@ public class LoginActivity extends AppCompatActivity {
     }
 
     public boolean authenticateUser(String username, String password){
-        // Retrieve user here from db (password,salt)
-        String db_salt = "salt_in_hex_format_from_db";
-        String db_password = "password_in_hex_format_from_db";
-        byte[] original_salt = hexToByte(db_salt);
+        PreparedStatement statement;
+        String query = "SELECT * FROM [dbo].[User] WHERE username = ?";
+        Object[] columns = new Object[5]; // User table columns
+        try {
+            statement = db_conn.prepareStatement(query);
+            statement.setString(1,username);
+            ResultSet resultSet = statement.executeQuery();
+            while (resultSet.next()){
+                columns[0] = resultSet.getInt(1);
+                columns[1] = resultSet.getString(2);
+                columns[2] = resultSet.getString(3);
+                columns[3] = resultSet.getString(4);
+                columns[4] = resultSet.getString(5);
+            }
+        } catch (SQLException throwables) {
+            throwables.printStackTrace();
+        }
+
+        String db_password = (String)columns[3];
+        String db_salt = (String) columns[4];
         byte[] original_password = hexToByte(db_password);
+        byte[] original_salt = hexToByte(db_salt);
 
         byte[] typed_password = getSaltedHash(password,original_salt);
         boolean result = Arrays.equals(original_password,typed_password);
