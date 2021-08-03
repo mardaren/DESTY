@@ -25,7 +25,7 @@ import java.sql.Statement;
 import java.util.Arrays;
 import java.util.logging.Level;
 import java.util.logging.Logger;
-
+import android.os.AsyncTask;
 
 public class LoginActivity extends AppCompatActivity {
     EditText user_name,user_mail,passwd;
@@ -34,10 +34,10 @@ public class LoginActivity extends AppCompatActivity {
     Connection db_conn=null;
     @Override
     protected void onCreate(Bundle savedInstanceState) {
-        StrictMode.ThreadPolicy policy = new StrictMode.ThreadPolicy.Builder().permitAll().build();
-        StrictMode.setThreadPolicy(policy);
+       // StrictMode.ThreadPolicy policy = new StrictMode.ThreadPolicy.Builder().permitAll().build();
+        //StrictMode.setThreadPolicy(policy);
         super.onCreate(savedInstanceState);
-        db_conn = initializeConn();
+        //db_conn = initializeConn();
         setContentView(R.layout.activity_login);
         user_mail = this.findViewById(R.id.useremail);
         user_name = this.findViewById(R.id.username);
@@ -45,13 +45,7 @@ public class LoginActivity extends AppCompatActivity {
         login_button = this.findViewById(R.id.login);
         reg_text = this.findViewById(R.id.register_text);
         reg_text.setOnClickListener(v -> register_page());
-        login_button.setOnClickListener(v -> {
-            String txt = login_button.getText().toString();
-            if(txt.equals(getResources().getString(R.string.action_sign_in)))
-                login();
-            else if(txt.equals(getResources().getString(R.string.register_now)))
-                signup();
-        });
+
     }
 
     public Connection initializeConn(){
@@ -207,5 +201,44 @@ public class LoginActivity extends AppCompatActivity {
         for (int i=0;i<bytes.length;i++)
             bytes[i] = (byte) Integer.parseInt(hex.substring(2*i,2*i+2),16);
         return bytes;
+    }
+
+    private class Connect extends AsyncTask<Void, Void, Connection> {
+        @Override
+        protected Connection doInBackground(Void... urls) {
+
+            Connection connection = null;
+            String conn_url = "";
+
+            try {
+                conn_url = BuildConfig.DB_URL;
+                Class.forName("net.sourceforge.jtds.jdbc.Driver");
+                connection = DriverManager.getConnection(conn_url);
+                if (connection != null) {
+                    Log.i("Connection Status", "Connected");
+                } else
+                    Log.i("Connection Status", "Not Connected");
+
+            } catch (SQLException throwable) {
+                throwable.printStackTrace();
+            } catch (ClassNotFoundException e) {
+                e.printStackTrace();
+            }
+            login_button.setOnClickListener(v -> {
+                String txt = login_button.getText().toString();
+                if(txt.equals(getResources().getString(R.string.action_sign_in)))
+                    login();
+                else if(txt.equals(getResources().getString(R.string.register_now)))
+                    signup();
+            });
+            return connection;
+
+
+        }
+
+       // @Override
+       // protected void onPostExecute(String result) {
+
+        //}
     }
 }
