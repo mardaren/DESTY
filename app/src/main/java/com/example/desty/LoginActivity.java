@@ -204,18 +204,19 @@ public class LoginActivity extends AppCompatActivity {
         return bytes;
     }
 
-    private class Connect extends AsyncTask<Void, Void, Connection> implements Runnable{
-        @Override
-        protected Connection doInBackground(Void... urls) {
+    private class Connect extends Thread{
 
+
+        @Override
+        public void run() {
             Connection connection = null;
             String conn_url = "";
 
             try {
                 conn_url = BuildConfig.DB_URL;
                 Class.forName("net.sourceforge.jtds.jdbc.Driver");
-                connection = DriverManager.getConnection(conn_url);
-                if (connection != null) {
+                db_conn = DriverManager.getConnection(conn_url);
+                if (db_conn != null) {
                     Log.i("Connection Status", "Connected");
                 } else
                     Log.i("Connection Status", "Not Connected");
@@ -225,6 +226,7 @@ public class LoginActivity extends AppCompatActivity {
             } catch (ClassNotFoundException e) {
                 e.printStackTrace();
             }
+
             login_button.setOnClickListener(v -> {
                 String txt = login_button.getText().toString();
                 if(txt.equals(getResources().getString(R.string.action_sign_in)))
@@ -232,14 +234,7 @@ public class LoginActivity extends AppCompatActivity {
                 else if(txt.equals(getResources().getString(R.string.register_now)))
                     signup();
             });
-            return connection;
 
-
-        }
-
-        @Override
-        public void run() {
-            db_conn = doInBackground();
         }
 
         // @Override
