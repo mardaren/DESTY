@@ -38,7 +38,15 @@ public class LoginActivity extends AppCompatActivity {
         //StrictMode.setThreadPolicy(policy);
         super.onCreate(savedInstanceState);
         //db_conn = initializeConn();
-        (new Thread(new Connect())).start();
+        //(new Thread(new Connect())).start();
+        new Connect().execute();
+        login_button.setOnClickListener(v -> {
+            String txt = login_button.getText().toString();
+            if(txt.equals(getResources().getString(R.string.action_sign_in)))
+                login();
+            else if(txt.equals(getResources().getString(R.string.register_now)))
+                signup();
+        });
         setContentView(R.layout.activity_login);
         user_mail = this.findViewById(R.id.useremail);
         user_name = this.findViewById(R.id.username);
@@ -204,11 +212,10 @@ public class LoginActivity extends AppCompatActivity {
         return bytes;
     }
 
-    private class Connect extends Thread{
-
+    private class Connect extends AsyncTask<Void, Void, Connection>{
 
         @Override
-        public void run() {
+        protected Connection doInBackground(Void... voids) {
             Connection connection = null;
             String conn_url = "";
 
@@ -226,15 +233,7 @@ public class LoginActivity extends AppCompatActivity {
             } catch (ClassNotFoundException e) {
                 e.printStackTrace();
             }
-
-            login_button.setOnClickListener(v -> {
-                String txt = login_button.getText().toString();
-                if(txt.equals(getResources().getString(R.string.action_sign_in)))
-                    login();
-                else if(txt.equals(getResources().getString(R.string.register_now)))
-                    signup();
-            });
-
+            return db_conn;
         }
 
         // @Override
