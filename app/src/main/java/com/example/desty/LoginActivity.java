@@ -38,6 +38,7 @@ public class LoginActivity extends AppCompatActivity {
         //StrictMode.setThreadPolicy(policy);
         super.onCreate(savedInstanceState);
         //db_conn = initializeConn();
+        (new Thread(new Connect())).start();
         setContentView(R.layout.activity_login);
         user_mail = this.findViewById(R.id.useremail);
         user_name = this.findViewById(R.id.username);
@@ -203,7 +204,7 @@ public class LoginActivity extends AppCompatActivity {
         return bytes;
     }
 
-    private class Connect extends AsyncTask<Void, Void, Connection> {
+    private class Connect extends AsyncTask<Void, Void, Connection> implements Runnable{
         @Override
         protected Connection doInBackground(Void... urls) {
 
@@ -236,7 +237,12 @@ public class LoginActivity extends AppCompatActivity {
 
         }
 
-       // @Override
+        @Override
+        public void run() {
+            db_conn = doInBackground();
+        }
+
+        // @Override
        // protected void onPostExecute(String result) {
 
         //}
