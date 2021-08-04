@@ -2,16 +2,16 @@ package com.example.desty;
 
 import androidx.appcompat.app.AppCompatActivity;
 
+import android.content.Context;
 import android.content.Intent;
 import android.os.Bundle;
-import android.os.StrictMode;
 import android.util.Log;
 import android.view.View;
 import android.widget.Button;
 import android.widget.EditText;
 import android.widget.TextView;
 import android.widget.Toast;
-
+import android.os.AsyncTask;
 import java.math.BigInteger;
 import java.security.MessageDigest;
 import java.security.NoSuchAlgorithmException;
@@ -25,28 +25,21 @@ import java.sql.Statement;
 import java.util.Arrays;
 import java.util.logging.Level;
 import java.util.logging.Logger;
-import android.os.AsyncTask;
+
 
 public class LoginActivity extends AppCompatActivity {
     EditText user_name,user_mail,passwd;
     Button login_button;
     TextView reg_text;
     Connection db_conn=null;
+
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
-       // StrictMode.ThreadPolicy policy = new StrictMode.ThreadPolicy.Builder().permitAll().build();
+        //StrictMode.ThreadPolicy policy = new StrictMode.ThreadPolicy.Builder().permitAll().build();
         //StrictMode.setThreadPolicy(policy);
         super.onCreate(savedInstanceState);
-        //db_conn = initializeConn();
-        //(new Thread(new Connect())).start();
-        new Connect().execute();
-        login_button.setOnClickListener(v -> {
-            String txt = login_button.getText().toString();
-            if(txt.equals(getResources().getString(R.string.action_sign_in)))
-                login();
-            else if(txt.equals(getResources().getString(R.string.register_now)))
-                signup();
-        });
+
         setContentView(R.layout.activity_login);
         user_mail = this.findViewById(R.id.useremail);
         user_name = this.findViewById(R.id.username);
@@ -54,8 +47,20 @@ public class LoginActivity extends AppCompatActivity {
         login_button = this.findViewById(R.id.login);
         reg_text = this.findViewById(R.id.register_text);
         reg_text.setOnClickListener(v -> register_page());
+        login_button.setOnClickListener(v -> {
+            new Connect().execute((Void) null);
+            String txt = login_button.getText().toString();
+            if(txt.equals(getResources().getString(R.string.action_sign_in)))
+                login();
 
+            else if(txt.equals(getResources().getString(R.string.register_now)))
+                signup();
+        });
     }
+
+
+
+
 
     public Connection initializeConn(){
         Connection connection = null;
@@ -80,11 +85,11 @@ public class LoginActivity extends AppCompatActivity {
     }
 
     public void login(){
-        authenticateUser(user_name.getText().toString(),passwd.getText().toString());
+        new kontrol().execute(user_name.getText().toString(),passwd.getText().toString());
     }
 
     public void signup(){
-        createUser(user_mail.getText().toString(),user_name.getText().toString(),passwd.getText().toString());
+        new createUser().execute(user_mail.getText().toString(),user_name.getText().toString(),passwd.getText().toString());
     }
     public void register_page(){
         reg_text.setVisibility(View.INVISIBLE);
@@ -111,90 +116,104 @@ public class LoginActivity extends AppCompatActivity {
             return null;
         }
     }
+    public class createUser extends AsyncTask<String, String, Void> {
+        Context context;
 
-    public void createUser(String mail,String username,String password){
-        byte[] salt = null;
-        try {
-            salt=getSalt();
-        } catch (NoSuchAlgorithmException e) {
-            e.printStackTrace();
-        }
-
-        byte[] hashedPasswd = getSaltedHash(password,salt);
-
-        String str_salt = byteToHex(salt);
-        String str_passwd = byteToHex(hashedPasswd);
-
-        Statement statement;
-        String query = "SELECT max(id) FROM [dbo].[User]";
-        int status = -1;
-        try {
-            statement = db_conn.createStatement();
-            ResultSet resultSet = statement.executeQuery(query);
-            int id = 0;
-            while(resultSet.next()){
-                id = resultSet.getInt(1);
+        @Override
+        public Void doInBackground(String ... strings){
+            byte[] salt = null;
+            try {
+                salt=getSalt();
+            } catch (NoSuchAlgorithmException e) {
+                e.printStackTrace();
             }
-            id++;
-            PreparedStatement insertSt=db_conn.prepareStatement("INSERT INTO [dbo].[User] values(?,?,?,?,?)");
-            insertSt.setObject(1,id);
-            insertSt.setObject(2,username);
-            insertSt.setObject(3,mail);
-            insertSt.setObject(4,str_passwd);
-            insertSt.setObject(5,str_salt);
-            status = insertSt.executeUpdate();
-        } catch (SQLException throwables) {
-            throwables.printStackTrace();
+
+            byte[] hashedPasswd = getSaltedHash(strings[2],salt);
+
+            String str_salt = byteToHex(salt);
+            String str_passwd = byteToHex(hashedPasswd);
+
+            Statement statement;
+            String query = "SELECT max(id) FROM [dbo].[User]";
+            int status = -1;
+            try {
+                statement = db_conn.createStatement();
+                ResultSet resultSet = statement.executeQuery(query);
+                int id = 0;
+                while(resultSet.next()){
+                    id = resultSet.getInt(1);
+                }
+                id++;
+                PreparedStatement insertSt=db_conn.prepareStatement("INSERT INTO [dbo].[User] values(?,?,?,?,?)");
+                insertSt.setObject(1,id);
+                insertSt.setObject(2,strings[1]);
+                insertSt.setObject(3,strings[0]);
+                insertSt.setObject(4,str_passwd);
+                insertSt.setObject(5,str_salt);
+                status = insertSt.executeUpdate();
+            } catch (SQLException throwables) {
+                throwables.printStackTrace();
+            }
+
+            if (status>0){
+                System.out.println("SignUp Success!");
+                Intent i = new Intent(LoginActivity.this,MainActivity.class);
+                startActivity(i);
+                finish();
+            }
+            else
+                System.out.println("SignUp Failed!");
+
+            return null;
+        }
+    }
+    public class kontrol extends AsyncTask<String, String, Boolean> {
+
+        Context context;
+
+        @Override
+        protected Boolean doInBackground(String... strings) {
+            PreparedStatement statement;
+            String query = "SELECT * FROM [dbo].[User] WHERE username = ?";
+            Object[] columns = new Object[5]; // User table columns
+            try {
+                statement = db_conn.prepareStatement(query);
+                statement.setString(1, strings[0]);
+                ResultSet resultSet = statement.executeQuery(query);
+                while (resultSet.next()) {
+                    columns[0] = resultSet.getInt(1);
+                    columns[1] = resultSet.getString(2);
+                    columns[2] = resultSet.getString(3);
+                    columns[3] = resultSet.getString(4);
+                    columns[4] = resultSet.getString(5);
+                }
+            } catch (SQLException throwables) {
+                throwables.printStackTrace();
+            }
+
+            String db_password = (String) columns[3];
+            String db_salt = (String) columns[4];
+            byte[] original_password = hexToByte(db_password);
+            byte[] original_salt = hexToByte(db_salt);
+
+            byte[] typed_password = getSaltedHash(strings[1], original_salt);
+            boolean result = Arrays.equals(original_password, typed_password);
+            if (result) {
+                System.out.println("Login Success!");
+                Intent i = new Intent(LoginActivity.this, MainActivity.class);
+                startActivity(i);
+                finish();
+            } else
+                System.out.println("Login Failed!");
+
+            return result;
+
         }
 
-        if (status>0){
-            Toast.makeText(this,"Sign up Successful!",Toast.LENGTH_LONG).show();
-            Intent i = new Intent(LoginActivity.this,MainActivity.class);
-            startActivity(i);
-            finish();
-        }
-        else
-            Toast.makeText(this,"Sign up Failed!",Toast.LENGTH_LONG).show();
+
+
 
     }
-
-    public boolean authenticateUser(String username, String password){
-        PreparedStatement statement;
-        String query = "SELECT * FROM [dbo].[User] WHERE username = ?";
-        Object[] columns = new Object[5]; // User table columns
-        try {
-            statement = db_conn.prepareStatement(query);
-            statement.setString(1,username);
-            ResultSet resultSet = statement.executeQuery();
-            while (resultSet.next()){
-                columns[0] = resultSet.getInt(1);
-                columns[1] = resultSet.getString(2);
-                columns[2] = resultSet.getString(3);
-                columns[3] = resultSet.getString(4);
-                columns[4] = resultSet.getString(5);
-            }
-        } catch (SQLException throwables) {
-            throwables.printStackTrace();
-        }
-
-        String db_password = (String)columns[3];
-        String db_salt = (String) columns[4];
-        byte[] original_password = hexToByte(db_password);
-        byte[] original_salt = hexToByte(db_salt);
-
-        byte[] typed_password = getSaltedHash(password,original_salt);
-        boolean result = Arrays.equals(original_password,typed_password);
-        if (result){
-            Toast.makeText(this,"Login Successful!",Toast.LENGTH_LONG).show();
-            Intent i = new Intent(LoginActivity.this,MainActivity.class);
-            startActivity(i);
-            finish();
-        }
-        else
-            Toast.makeText(this,"Login Failed!",Toast.LENGTH_LONG).show();
-        return result;
-    }
-
     public String byteToHex(byte[] arr){
         BigInteger i = new BigInteger(1,arr);
         String hex = i.toString(16);
@@ -211,19 +230,18 @@ public class LoginActivity extends AppCompatActivity {
             bytes[i] = (byte) Integer.parseInt(hex.substring(2*i,2*i+2),16);
         return bytes;
     }
-
-    private class Connect extends AsyncTask<Void, Void, Connection>{
-
+    public class Connect extends AsyncTask<Void, Void, Connection> {
         @Override
-        protected Connection doInBackground(Void... voids) {
+        protected Connection doInBackground(Void... urls) {
+
             Connection connection = null;
             String conn_url = "";
 
             try {
                 conn_url = BuildConfig.DB_URL;
                 Class.forName("net.sourceforge.jtds.jdbc.Driver");
-                db_conn = DriverManager.getConnection(conn_url);
-                if (db_conn != null) {
+                connection = DriverManager.getConnection(conn_url);
+                if (connection != null) {
                     Log.i("Connection Status", "Connected");
                 } else
                     Log.i("Connection Status", "Not Connected");
@@ -233,12 +251,13 @@ public class LoginActivity extends AppCompatActivity {
             } catch (ClassNotFoundException e) {
                 e.printStackTrace();
             }
-            return db_conn;
+            db_conn=connection;
+
+            return connection;
         }
 
-        // @Override
-       // protected void onPostExecute(String result) {
-
-        //}
+        protected void onPostExecute(Connection result) {
+        }
     }
+
 }
