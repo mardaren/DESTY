@@ -27,7 +27,7 @@ public class HomepageFragment extends Fragment {
         super.onViewCreated(view, savedInstanceState);
         mapButton = view.findViewById(R.id.map_button);
         mapButton.setOnClickListener(v -> {
-            Intent i = new Intent(getActivity(), MapsActivity.class);
+            Intent i = new Intent(getActivity(), MyLocationDemoActivity.class);
             startActivity(i);
             getActivity().finish();
         });
