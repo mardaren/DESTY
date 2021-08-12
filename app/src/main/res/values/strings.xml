@@ -16,4 +16,8 @@
     <string name="login_failed">"Login failed"</string>
     <string name="register">"Haven't registered yet?  Register now"</string>
     <string name="register_now">"Register Now"</string>
+    <string-array name="den">
+        <item>United States</item>
+        <item>Turkey</item>
+    </string-array>
 </resources>

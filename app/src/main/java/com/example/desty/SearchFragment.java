@@ -11,11 +11,12 @@ import androidx.fragment.app.Fragment;
 
 import org.jetbrains.annotations.NotNull;
 
-public class SearchFragment extends Fragment {
+public class SearchFragment extends Fragment{
     @Nullable
     @org.jetbrains.annotations.Nullable
     @Override
     public View onCreateView(@NonNull @NotNull LayoutInflater inflater, @Nullable @org.jetbrains.annotations.Nullable ViewGroup container, @Nullable @org.jetbrains.annotations.Nullable Bundle savedInstanceState) {
         return inflater.inflate(R.layout.fragment_search, container, false);
     }
+
 }
