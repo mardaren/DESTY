@@ -32,17 +32,19 @@ public class MainActivity extends AppCompatActivity implements AdapterView.OnIte
         viewPager.setAdapter(sectionsPagerAdapter);
         TabLayout tabs = binding.tabs;
         tabs.setupWithViewPager(viewPager);
+        /*
         FloatingActionButton fab = binding.fab;
 
         fab.setOnClickListener(view -> Snackbar.make(view, "Replace with your own action", Snackbar.LENGTH_LONG)
-                .setAction("Action", null).show());
+                .setAction("Action", null).show());*/
 
         // Search area spinners
+        /*
         Spinner spinner = findViewById(R.id.spinner_country);
         ArrayAdapter<CharSequence> adapter = ArrayAdapter.createFromResource(this,R.array.den, android.R.layout.simple_spinner_item);
         adapter.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item);
         spinner.setAdapter(adapter);
-        spinner.setOnItemSelectedListener(this);
+        spinner.setOnItemSelectedListener(this);*/
     }
 
     @Override
