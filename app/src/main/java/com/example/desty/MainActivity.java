@@ -87,6 +87,10 @@ public class MainActivity extends AppCompatActivity {
 
             return resultSet;
         }
+        public NameSearch(String username){
+            this.name = username;
+
+        }
     }
 
     private class  CitySearch extends AsyncTask<String, String, ResultSet> {
@@ -107,6 +111,10 @@ public class MainActivity extends AppCompatActivity {
 
             return resultSet;
         }
+        public CitySearch(String cityName){
+            this.name = cityName;
+
+        }
     }
     private class  CountrySearch extends AsyncTask<String, String, ResultSet> {
         String name;
@@ -125,6 +133,10 @@ public class MainActivity extends AppCompatActivity {
             }
 
             return resultSet;
+        }
+        public CountrySearch(String countryName){
+            this.name = countryName;
+
         }
     }
 
@@ -147,6 +159,11 @@ public class MainActivity extends AppCompatActivity {
             }
 
             return resultSet;
+        }
+        public CountrySearch(String countryName,String cityName,String name){
+            this.countryName = countryName;
+            this.cityName = cityName;
+            this.name = name;
         }
     }
 }
