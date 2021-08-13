@@ -16,7 +16,7 @@ import androidx.appcompat.app.AppCompatActivity;
 import com.example.desty.ui.main.SectionsPagerAdapter;
 import com.example.desty.databinding.ActivityMainBinding;
 
-public class MainActivity extends AppCompatActivity implements AdapterView.OnItemSelectedListener {
+public class MainActivity extends AppCompatActivity {
 
     private ActivityMainBinding binding;
 
@@ -32,29 +32,6 @@ public class MainActivity extends AppCompatActivity implements AdapterView.OnIte
         viewPager.setAdapter(sectionsPagerAdapter);
         TabLayout tabs = binding.tabs;
         tabs.setupWithViewPager(viewPager);
-        /*
-        FloatingActionButton fab = binding.fab;
-
-        fab.setOnClickListener(view -> Snackbar.make(view, "Replace with your own action", Snackbar.LENGTH_LONG)
-                .setAction("Action", null).show());*/
-
-        // Search area spinners
-        /*
-        Spinner spinner = findViewById(R.id.spinner_country);
-        ArrayAdapter<CharSequence> adapter = ArrayAdapter.createFromResource(this,R.array.den, android.R.layout.simple_spinner_item);
-        adapter.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item);
-        spinner.setAdapter(adapter);
-        spinner.setOnItemSelectedListener(this);*/
-    }
-
-    @Override
-    public void onItemSelected(AdapterView<?> parent, View view, int position, long id) {
-        String text = parent.getItemAtPosition(position).toString();
-        Toast.makeText(parent.getContext(), text, Toast.LENGTH_SHORT);
-    }
-
-    @Override
-    public void onNothingSelected(AdapterView<?> parent) {
 
     }
 }
