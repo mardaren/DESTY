@@ -68,77 +68,7 @@ public class MainActivity extends AppCompatActivity {
             return connection;
         }
     }
-    private class  NameSearch extends AsyncTask<String, String, ResultSet> {
-        String name;
 
-        @Override
-        protected ResultSet doInBackground(String... strings) {
-            ResultSet resultSet = null;
-            PreparedStatement statement;
-            String query = "SELECT * FROM [dbo].[Route] WHERE route_name like '%?%'";
-
-            try {
-                statement = db_conn.prepareStatement(query);
-                statement.setString(1, name);
-                resultSet = statement.executeQuery();
-            } catch (SQLException throwables) {
-                throwables.printStackTrace();
-            }
-
-            return resultSet;
-        }
-        public NameSearch(String username){
-            this.name = username;
-
-        }
-    }
-
-    private class  CitySearch extends AsyncTask<String, String, ResultSet> {
-        String name;
-
-        @Override
-        protected ResultSet doInBackground(String... strings) {
-            PreparedStatement statement;
-            String query = "SELECT * FROM [dbo].[Route] WHERE city like '?'";
-            ResultSet resultSet = null;
-            try {
-                statement = db_conn.prepareStatement(query);
-                statement.setString(1, name);
-                resultSet = statement.executeQuery();
-            } catch (SQLException throwables) {
-                throwables.printStackTrace();
-            }
-
-            return resultSet;
-        }
-        public CitySearch(String cityName){
-            this.name = cityName;
-
-        }
-    }
-    private class  CountrySearch extends AsyncTask<String, String, ResultSet> {
-        String name;
-
-        @Override
-        protected ResultSet doInBackground(String... strings) {
-            PreparedStatement statement;
-            String query = "SELECT * FROM [dbo].[Route] WHERE country like '?'";
-            ResultSet resultSet = null;
-            try {
-                statement = db_conn.prepareStatement(query);
-                statement.setString(1, name);
-                resultSet = statement.executeQuery();
-            } catch (SQLException throwables) {
-                throwables.printStackTrace();
-            }
-
-            return resultSet;
-        }
-        public CountrySearch(String countryName){
-            this.name = countryName;
-
-        }
-    }
 
     private class  AllSearch extends AsyncTask<String, String, ResultSet> {
         String countryName,cityName,name;
@@ -146,13 +76,49 @@ public class MainActivity extends AppCompatActivity {
         @Override
         protected ResultSet doInBackground(String... strings) {
             PreparedStatement statement;
-            String query = "SELECT * FROM [dbo].[Route] WHERE country like '?' and city like '?' and route_name like '%?%'";
             ResultSet resultSet = null;
+            String query = "";
             try {
-                statement = db_conn.prepareStatement(query);
-                statement.setString(1, countryName);
-                statement.setString(2, cityName);
-                statement.setString(3, name);
+                if(countryName!=null && cityName!=null && name!=null){
+                    query = "SELECT * FROM [dbo].[Route] WHERE country like '?' and city like '?' and route_name like '%?%'";
+                    statement = db_conn.prepareStatement(query);
+                    statement.setString(1, countryName);
+                    statement.setString(2, cityName);
+                    statement.setString(3, name);
+                }
+                else if (countryName!=null && cityName!=null && name==null){
+                    query = "SELECT * FROM [dbo].[Route] WHERE country like '?' and city like '?' ";
+                    statement = db_conn.prepareStatement(query);
+                    statement.setString(1, countryName);
+                    statement.setString(2, cityName);
+                }
+                else if (countryName!=null && cityName==null && name!=null){
+                    query = "SELECT * FROM [dbo].[Route] WHERE country like '?' and route_name like '%?%'";
+                    statement = db_conn.prepareStatement(query);
+                    statement.setString(1, countryName);
+                    statement.setString(2, name);
+                }
+                else if(countryName==null && cityName!=null && name!=null){
+                    query = "SELECT * FROM [dbo].[Route] WHERE  city like '?' and route_name like '%?%'";
+                    statement = db_conn.prepareStatement(query);
+                    statement.setString(1, cityName);
+                    statement.setString(2, name);
+                }
+                else if(countryName!=null && cityName==null && name==null){
+                    query = "SELECT * FROM [dbo].[Route] WHERE country like '?' ";
+                    statement = db_conn.prepareStatement(query);
+                    statement.setString(1, countryName);
+                }
+                else if(countryName==null && cityName!=null && name==null){
+                    query = "SELECT * FROM [dbo].[Route] WHERE city like '?' ";
+                    statement = db_conn.prepareStatement(query);
+                    statement.setString(1, cityName);
+                }
+                else{
+                    query = "SELECT * FROM [dbo].[Route] WHERE route_name like '%?%'";
+                    statement = db_conn.prepareStatement(query);
+                    statement.setString(1, name);
+                }
                 resultSet = statement.executeQuery();
             } catch (SQLException throwables) {
                 throwables.printStackTrace();
@@ -160,7 +126,7 @@ public class MainActivity extends AppCompatActivity {
 
             return resultSet;
         }
-        public CountrySearch(String countryName,String cityName,String name){
+        public AllSearch(String countryName,String cityName,String name){
             this.countryName = countryName;
             this.cityName = cityName;
             this.name = name;
