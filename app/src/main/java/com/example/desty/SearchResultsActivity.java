@@ -2,6 +2,7 @@ package com.example.desty;
 
 import androidx.appcompat.app.AppCompatActivity;
 
+import android.content.Intent;
 import android.os.Bundle;
 
 public class SearchResultsActivity extends AppCompatActivity {
@@ -11,4 +12,5 @@ public class SearchResultsActivity extends AppCompatActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_search_results);
     }
+
 }

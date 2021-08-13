@@ -29,7 +29,8 @@ public class HomepageFragment extends Fragment {
         mapButton.setOnClickListener(v -> {
             Intent i = new Intent(getActivity(), MyLocationDemoActivity.class);
             startActivity(i);
-            getActivity().finish();
         });
     }
+
+
 }

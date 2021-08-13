@@ -41,7 +41,6 @@ public class SearchFragment extends Fragment{
         buttonSearch.setOnClickListener(v -> {
             Intent i = new Intent(getActivity(), SearchResultsActivity.class);
             startActivity(i);
-            getActivity().finish();
         });
 
         // fill **** GELISTIRILEBILIR ****

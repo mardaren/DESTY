@@ -38,7 +38,6 @@ public class ProfileFragment extends Fragment {
         buttonLists.setOnClickListener(v -> {
             Intent i = new Intent(getActivity(), ListsActivity.class);
             startActivity(i);
-            getActivity().finish();
         });
 
         // followlist button
@@ -46,7 +45,6 @@ public class ProfileFragment extends Fragment {
         buttonFollowList.setOnClickListener(v -> {
             Intent i = new Intent(getActivity(), FollowlistActivity.class);
             startActivity(i);
-            getActivity().finish();
         });
 
         // routes button
@@ -54,7 +52,6 @@ public class ProfileFragment extends Fragment {
         buttonRoutes.setOnClickListener(v -> {
             Intent i = new Intent(getActivity(), RoutesActivity.class);
             startActivity(i);
-            getActivity().finish();
         });
 
         // edit button
@@ -62,7 +59,6 @@ public class ProfileFragment extends Fragment {
         buttonEdit.setOnClickListener(v -> {
             Intent i = new Intent(getActivity(), EditActivity.class);
             startActivity(i);
-            getActivity().finish();
         });
     }
 }
