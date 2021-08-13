@@ -135,6 +135,11 @@ public class LoginActivity extends AppCompatActivity {
             if (status>0){
                 check = true;
                 Intent i = new Intent(LoginActivity.this,MainActivity.class);
+                try {
+                    db_conn.close();
+                } catch (SQLException throwables) {
+                    throwables.printStackTrace();
+                }
                 startActivity(i);
                 finish();
             }
@@ -189,6 +194,11 @@ public class LoginActivity extends AppCompatActivity {
             if (result) {
                 check = true;
                 Intent i = new Intent(LoginActivity.this, MainActivity.class);
+                try {
+                    db_conn.close();
+                } catch (SQLException throwables) {
+                    throwables.printStackTrace();
+                }
                 startActivity(i);
                 finish();
             }
