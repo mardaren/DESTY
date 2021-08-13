@@ -19,7 +19,7 @@
         <activity android:name=".profile.RoutesActivity" />
         <activity android:name=".profile.FollowlistActivity" />
         <activity android:name=".profile.ListsActivity" />
-        <activity android:name=".MyLocationDemoActivity" />
+        <activity android:name=".LocationActivity" />
         <activity android:name=".MapsActivity" />
         <activity android:name=".MainActivity" />
         <activity android:name=".LoginActivity" />
