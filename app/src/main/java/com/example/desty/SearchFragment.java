@@ -10,6 +10,7 @@ import android.view.ViewGroup;
 import android.widget.AdapterView;
 import android.widget.ArrayAdapter;
 import android.widget.Button;
+import android.widget.EditText;
 import android.widget.Spinner;
 import android.widget.TextView;
 import android.widget.Toast;
@@ -21,6 +22,7 @@ import androidx.fragment.app.Fragment;
 
 import org.jetbrains.annotations.NotNull;
 
+import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.Map;
 import java.util.concurrent.ConcurrentMap;
@@ -30,6 +32,8 @@ public class SearchFragment extends Fragment{
     private String Keyword="", Country="", City="";
     private HashMap citiesCountries = new HashMap<String,String[]>();
     private Button buttonSearch;
+    private EditText editText_keyword;
+
 
     @Nullable
     @org.jetbrains.annotations.Nullable
@@ -37,11 +41,8 @@ public class SearchFragment extends Fragment{
     public View onCreateView(@NonNull @NotNull LayoutInflater inflater, @Nullable @org.jetbrains.annotations.Nullable ViewGroup container, @Nullable @org.jetbrains.annotations.Nullable Bundle savedInstanceState) {
         View view = inflater.inflate(R.layout.fragment_search, container, false);
 
-        buttonSearch = view.findViewById(R.id.button_search);
-        buttonSearch.setOnClickListener(v -> {
-            Intent i = new Intent(getActivity(), SearchResultsActivity.class);
-            startActivity(i);
-        });
+        // keyword
+        editText_keyword = (EditText) view.findViewById(R.id.editKeyword);
 
         // fill **** GELISTIRILEBILIR ****
         String[] countries = {"Country", "United States", "Turkey"};
@@ -52,6 +53,16 @@ public class SearchFragment extends Fragment{
                 R.layout.support_simple_spinner_dropdown_item, android.R.layout.simple_spinner_dropdown_item);
         PSpinner spinnerCountry = new PSpinner(spinnerCity, view, countries, R.id.spinner_country,
                 R.layout.support_simple_spinner_dropdown_item, android.R.layout.simple_spinner_dropdown_item);
+
+        buttonSearch = view.findViewById(R.id.button_search);
+        buttonSearch.setOnClickListener(v -> {
+            //query phase
+            sendQuery();
+
+            // page phase
+            Intent i = new Intent(getActivity(), SearchResultsActivity.class);
+            startActivity(i);
+        });
 
         return view;
     }
@@ -67,7 +78,18 @@ public class SearchFragment extends Fragment{
     }
 
     private void sendQuery(){
-
+        String w0,w1,w2;
+        w0 = "" + editText_keyword.getText();
+        System.out.println(w0+" "+ Country+" "+ City);
+        w0 = (w0 == "")?null:w0;
+        w1 = (Country == "")?null:Country;
+        w2 = (City == "" || City == "City" || City == "City - Select Country")?null:City;
+        System.out.println(w0+" "+ w1+" "+ w2);
+        ArrayList result = ((MainActivity)getActivity()).search(w0,w1,w2);
+        System.out.println(result.isEmpty());
+        /*
+        Object[] arr = (Object[]) result.get(0);
+        System.out.println((String) arr[0]);*/
     }
 
     private class PSpinner {
@@ -140,7 +162,10 @@ public class SearchFragment extends Fragment{
                             child.fillAdapter();
                             child.setAdapter();
                             child.setOnItemSelectedListener();
-                            //Toast.makeText(getActivity().getApplicationContext(), child.array[0], Toast.LENGTH_SHORT).show();
+                            Country = result;
+                        }
+                        else{
+                            City = result;
                         }
                     }
                 }
