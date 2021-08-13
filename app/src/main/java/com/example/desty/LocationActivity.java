@@ -15,11 +15,13 @@
 
 package com.example.desty;
 
+import com.google.android.gms.location.FusedLocationProviderClient;
+import com.google.android.gms.location.LocationServices;
 import com.google.android.gms.maps.GoogleMap;
 import com.google.android.gms.maps.GoogleMap.OnMyLocationButtonClickListener;
-import com.google.android.gms.maps.GoogleMap.OnMyLocationClickListener;
 import com.google.android.gms.maps.OnMapReadyCallback;
 import com.google.android.gms.maps.SupportMapFragment;
+import com.google.android.gms.tasks.OnSuccessListener;
 
 import android.Manifest;
 import android.annotation.SuppressLint;
@@ -31,7 +33,6 @@ import androidx.annotation.NonNull;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.core.app.ActivityCompat;
 import androidx.core.content.ContextCompat;
-import android.widget.Toast;
 
 /**
  * This demo shows how GMS Location can be used to check for changes to the users location.  The
@@ -39,10 +40,9 @@ import android.widget.Toast;
  * Permission for {@link android.Manifest.permission#ACCESS_FINE_LOCATION} is requested at run
  * time. If the permission has not been granted, the Activity is finished with an error message.
  */
-public class MyLocationDemoActivity extends AppCompatActivity
+public class LocationActivity extends AppCompatActivity
         implements
         OnMyLocationButtonClickListener,
-        OnMyLocationClickListener,
         OnMapReadyCallback,
         ActivityCompat.OnRequestPermissionsResultCallback {
 
@@ -58,25 +58,43 @@ public class MyLocationDemoActivity extends AppCompatActivity
      * {@link #onRequestPermissionsResult(int, String[], int[])}.
      */
     private boolean permissionDenied = false;
-
+    private FusedLocationProviderClient fusedLocationClient;
     private GoogleMap map;
+    private double longitude;
+    private double latitude;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        setContentView(R.layout.activity_my_location_demo);
-
+        setContentView(R.layout.activity_location);
         SupportMapFragment mapFragment =
                 (SupportMapFragment) getSupportFragmentManager().findFragmentById(R.id.map);
         mapFragment.getMapAsync(this);
+        fusedLocationClient = LocationServices.getFusedLocationProviderClient(this);
     }
 
     @Override
     public void onMapReady(GoogleMap googleMap) {
         map = googleMap;
         map.setOnMyLocationButtonClickListener(this);
-        map.setOnMyLocationClickListener(this);
         enableMyLocation();
+    }
+    @SuppressLint("MissingPermission")
+    @Override
+    public boolean onMyLocationButtonClick() {
+        fusedLocationClient.getLastLocation()
+                .addOnSuccessListener(this, new OnSuccessListener<Location>() {
+                    @Override
+                    public void onSuccess(Location location) {
+                        // Got last known location. In some rare situations this can be null.
+                        if (location != null) {
+                            // Logic to handle location object
+                            longitude = location.getLongitude();
+                            latitude = location.getLatitude();
+                        }
+                    }
+                });
+        return false;
     }
 
     /**
@@ -94,19 +112,6 @@ public class MyLocationDemoActivity extends AppCompatActivity
             PermissionUtils.requestPermission(this, LOCATION_PERMISSION_REQUEST_CODE,
                     Manifest.permission.ACCESS_FINE_LOCATION, true);
         }
-    }
-
-    @Override
-    public boolean onMyLocationButtonClick() {
-        Toast.makeText(this, "MyLocation button clicked", Toast.LENGTH_SHORT).show();
-        // Return false so that we don't consume the event and the default behavior still occurs
-        // (the camera animates to the user's current position).
-        return false;
-    }
-
-    @Override
-    public void onMyLocationClick(@NonNull Location location) {
-        Toast.makeText(this, "Current location:\n" + location, Toast.LENGTH_LONG).show();
     }
 
     @Override
