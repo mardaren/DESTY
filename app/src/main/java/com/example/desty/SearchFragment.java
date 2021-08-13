@@ -25,12 +25,13 @@ import org.jetbrains.annotations.NotNull;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.Map;
+import java.util.Objects;
 import java.util.concurrent.ConcurrentMap;
 
 public class SearchFragment extends Fragment{
 
     private String Keyword="", Country="", City="";
-    private HashMap citiesCountries = new HashMap<String,String[]>();
+    private HashMap<String,String[]> citiesCountries = new HashMap<>();
     private Button buttonSearch;
     private EditText editText_keyword;
 
@@ -42,7 +43,7 @@ public class SearchFragment extends Fragment{
         View view = inflater.inflate(R.layout.fragment_search, container, false);
 
         // keyword
-        editText_keyword = (EditText) view.findViewById(R.id.editKeyword);
+        editText_keyword = view.findViewById(R.id.editKeyword);
 
         // fill **** GELISTIRILEBILIR ****
         String[] countries = {"Country", "United States", "Turkey"};
@@ -80,13 +81,14 @@ public class SearchFragment extends Fragment{
     private void sendQuery(){
         String w0,w1,w2;
         w0 = "" + editText_keyword.getText();
-        System.out.println(w0+" "+ Country+" "+ City);
-        w0 = (w0 == "")?null:w0;
-        w1 = (Country == "")?null:Country;
-        w2 = (City == "" || City == "City" || City == "City - Select Country")?null:City;
-        System.out.println(w0+" "+ w1+" "+ w2);
-        ArrayList result = ((MainActivity)getActivity()).search(w0,w1,w2);
-        System.out.println(result.isEmpty());
+        //System.out.println(w0+" "+ Country+" "+ City);
+        w0 = (w0.equals(""))?null:w0;
+        w1 = (Country.equals(""))?null:Country;
+        w2 = (City.equals("") || City.equals("City") || City.equals("City - Select Country"))?null:City;
+        //System.out.println(w0+" "+ w1+" "+ w2);
+
+        ArrayList<Object[]> result = ((MainActivity) requireActivity()).search(w0,w1,w2);
+        //System.out.println(result.isEmpty());
         /*
         Object[] arr = (Object[]) result.get(0);
         System.out.println((String) arr[0]);*/

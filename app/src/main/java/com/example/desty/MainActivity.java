@@ -70,60 +70,61 @@ public class MainActivity extends AppCompatActivity {
         }
     }
 
-    public ArrayList search(String keyword, String country, String city){
+    public ArrayList<Object[]> search(String keyword, String country, String city){
         AllSearch search = new AllSearch(keyword, country, city);
+        search.execute();
         return search.table;
     }
 
-    private class  AllSearch extends AsyncTask<String, String, ResultSet> {
-        String countryName,cityName,name;
-        ArrayList table = new ArrayList<Object[]>();
+    private class  AllSearch extends AsyncTask<String, String, String> {
+        String countryName,cityName,tag;
+        ArrayList<Object[]> table = new ArrayList<>();
 
         @Override
-        protected ResultSet doInBackground(String... strings) {
+        protected String doInBackground(String... strings) {
             PreparedStatement statement;
-            ResultSet resultSet = null;
-            String query = "";
+            ResultSet resultSet;
+            String query;
             try {
-                if(countryName!=null && cityName!=null && name!=null){
-                    query = "SELECT * FROM [dbo].[Route] WHERE country like '?' and city like '?' and route_name like '%?%'";
+                if(countryName!=null && cityName!=null && tag!=null){
+                    query = "SELECT * FROM [dbo].[Route] WHERE country like ? and city like ? and route_name like ?";
                     statement = db_conn.prepareStatement(query);
-                    statement.setString(1, countryName);
-                    statement.setString(2, cityName);
-                    statement.setString(3, name);
+                    statement.setString(1, countryName+"%");
+                    statement.setString(2, cityName+"%");
+                    statement.setString(3, tag+"%");
                 }
-                else if (countryName!=null && cityName!=null && name==null){
-                    query = "SELECT * FROM [dbo].[Route] WHERE country like '?' and city like '?' ";
+                else if (countryName != null && cityName != null){
+                    query = "SELECT * FROM [dbo].[Route] WHERE country like ? and city like ? ";
                     statement = db_conn.prepareStatement(query);
-                    statement.setString(1, countryName);
-                    statement.setString(2, cityName);
+                    statement.setString(1, countryName+"%");
+                    statement.setString(2, cityName+"%");
                 }
-                else if (countryName!=null && cityName==null && name!=null){
-                    query = "SELECT * FROM [dbo].[Route] WHERE country like '?' and route_name like '%?%'";
+                else if (countryName != null && tag != null){
+                    query = "SELECT * FROM [dbo].[Route] WHERE country like ? and route_name like ?";
                     statement = db_conn.prepareStatement(query);
-                    statement.setString(1, countryName);
-                    statement.setString(2, name);
+                    statement.setString(1, countryName+"%");
+                    statement.setString(2, tag+"%");
                 }
-                else if(countryName==null && cityName!=null && name!=null){
-                    query = "SELECT * FROM [dbo].[Route] WHERE  city like '?' and route_name like '%?%'";
+                else if(cityName!=null && tag!=null){
+                    query = "SELECT * FROM [dbo].[Route] WHERE  city like ? and route_name like ?";
                     statement = db_conn.prepareStatement(query);
-                    statement.setString(1, cityName);
-                    statement.setString(2, name);
+                    statement.setString(1, cityName+"%");
+                    statement.setString(2, tag+"%");
                 }
-                else if(countryName!=null && cityName==null && name==null){
-                    query = "SELECT * FROM [dbo].[Route] WHERE country like '?' ";
+                else if(countryName != null){
+                    query = "SELECT * FROM [dbo].[Route] WHERE country like ? ";
                     statement = db_conn.prepareStatement(query);
-                    statement.setString(1, countryName);
+                    statement.setString(1, countryName+"%");
                 }
-                else if(countryName==null && cityName!=null && name==null){
-                    query = "SELECT * FROM [dbo].[Route] WHERE city like '?' ";
+                else if(cityName != null){
+                    query = "SELECT * FROM [dbo].[Route] WHERE city like ? ";
                     statement = db_conn.prepareStatement(query);
-                    statement.setString(1, cityName);
+                    statement.setString(1, cityName+"%");
                 }
                 else{
-                    query = "SELECT * FROM [dbo].[Route] WHERE route_name like '%?%'";
+                    query = "SELECT * FROM [dbo].[Route] WHERE route_name like ?";
                     statement = db_conn.prepareStatement(query);
-                    statement.setString(1, name);
+                    statement.setString(1, tag+"%");
                 }
                 resultSet = statement.executeQuery();
                 Object[] tuple = new Object[8];
@@ -144,10 +145,10 @@ public class MainActivity extends AppCompatActivity {
 
             return null;
         }
-        public AllSearch(String countryName,String cityName,String name){
+        public AllSearch(String countryName,String cityName,String tag){
             this.countryName = countryName;
             this.cityName = cityName;
-            this.name = name;
+            this.tag = tag;
         }
     }
 }
