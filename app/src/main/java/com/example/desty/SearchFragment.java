@@ -1,6 +1,7 @@
 package com.example.desty;
 
 import android.content.Context;
+import android.content.Intent;
 import android.graphics.Color;
 import android.os.Bundle;
 import android.view.LayoutInflater;
@@ -8,6 +9,7 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.AdapterView;
 import android.widget.ArrayAdapter;
+import android.widget.Button;
 import android.widget.Spinner;
 import android.widget.TextView;
 import android.widget.Toast;
@@ -27,12 +29,20 @@ public class SearchFragment extends Fragment{
 
     private String Keyword="", Country="", City="";
     private HashMap citiesCountries = new HashMap<String,String[]>();
+    private Button buttonSearch;
 
     @Nullable
     @org.jetbrains.annotations.Nullable
     @Override
     public View onCreateView(@NonNull @NotNull LayoutInflater inflater, @Nullable @org.jetbrains.annotations.Nullable ViewGroup container, @Nullable @org.jetbrains.annotations.Nullable Bundle savedInstanceState) {
         View view = inflater.inflate(R.layout.fragment_search, container, false);
+
+        buttonSearch = view.findViewById(R.id.button_search);
+        buttonSearch.setOnClickListener(v -> {
+            Intent i = new Intent(getActivity(), SearchResultsActivity.class);
+            startActivity(i);
+            getActivity().finish();
+        });
 
         // fill **** GELISTIRILEBILIR ****
         String[] countries = {"Country", "United States", "Turkey"};
