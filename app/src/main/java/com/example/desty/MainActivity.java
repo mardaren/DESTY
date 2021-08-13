@@ -68,84 +68,85 @@ public class MainActivity extends AppCompatActivity {
             return connection;
         }
     }
-    private class  NameSearch extends AsyncTask<String, String, String> {
+    private class  NameSearch extends AsyncTask<String, String, ResultSet> {
         String name;
 
         @Override
-        protected String doInBackground(String... strings) {
+        protected ResultSet doInBackground(String... strings) {
+            ResultSet resultSet = null;
             PreparedStatement statement;
             String query = "SELECT * FROM [dbo].[Route] WHERE route_name like '%?%'";
 
             try {
                 statement = db_conn.prepareStatement(query);
                 statement.setString(1, name);
-                ResultSet resultSet = statement.executeQuery();
+                resultSet = statement.executeQuery();
             } catch (SQLException throwables) {
                 throwables.printStackTrace();
             }
 
-            return null;
+            return resultSet;
         }
     }
 
-    private class  CitySearch extends AsyncTask<String, String, String> {
+    private class  CitySearch extends AsyncTask<String, String, ResultSet> {
         String name;
 
         @Override
-        protected String doInBackground(String... strings) {
+        protected ResultSet doInBackground(String... strings) {
             PreparedStatement statement;
             String query = "SELECT * FROM [dbo].[Route] WHERE city like '?'";
-
+            ResultSet resultSet = null;
             try {
                 statement = db_conn.prepareStatement(query);
                 statement.setString(1, name);
-                ResultSet resultSet = statement.executeQuery();
+                resultSet = statement.executeQuery();
             } catch (SQLException throwables) {
                 throwables.printStackTrace();
             }
 
-            return null;
+            return resultSet;
         }
     }
-    private class  CountrySearch extends AsyncTask<String, String, String> {
+    private class  CountrySearch extends AsyncTask<String, String, ResultSet> {
         String name;
 
         @Override
-        protected String doInBackground(String... strings) {
+        protected ResultSet doInBackground(String... strings) {
             PreparedStatement statement;
             String query = "SELECT * FROM [dbo].[Route] WHERE country like '?'";
-
+            ResultSet resultSet = null;
             try {
                 statement = db_conn.prepareStatement(query);
                 statement.setString(1, name);
-                ResultSet resultSet = statement.executeQuery();
+                resultSet = statement.executeQuery();
             } catch (SQLException throwables) {
                 throwables.printStackTrace();
             }
 
-            return null;
+            return resultSet;
         }
     }
 
-    private class  AllSearch extends AsyncTask<String, String, String> {
+    private class  AllSearch extends AsyncTask<String, String, ResultSet> {
         String countryName,cityName,name;
 
         @Override
-        protected String doInBackground(String... strings) {
+        protected ResultSet doInBackground(String... strings) {
             PreparedStatement statement;
             String query = "SELECT * FROM [dbo].[Route] WHERE country like '?' and city like '?' and route_name like '%?%'";
-
+            ResultSet resultSet = null;
             try {
                 statement = db_conn.prepareStatement(query);
                 statement.setString(1, countryName);
                 statement.setString(2, cityName);
                 statement.setString(3, name);
-                ResultSet resultSet = statement.executeQuery();
+                resultSet = statement.executeQuery();
             } catch (SQLException throwables) {
                 throwables.printStackTrace();
             }
 
-            return null;
+            return resultSet;
         }
     }
 }
