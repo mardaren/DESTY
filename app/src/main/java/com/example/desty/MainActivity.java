@@ -43,6 +43,7 @@ public class MainActivity extends AppCompatActivity {
     Stack fall = new Stack();
     Stack top10 = new Stack();
     Stack userList = new Stack();
+    Stack published = new Stack();
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -289,6 +290,38 @@ public class MainActivity extends AppCompatActivity {
                     columns[2] = resultSet.getInt(5); //user id
 
                     userList.add(columns);
+                }
+
+            } catch (SQLException throwables) {
+                throwables.printStackTrace();
+            }
+            return null;
+        }
+
+
+    }
+
+    // eğer kullanıc publisher değil ise null doldurucak publisher ise publisher id ve list id döncek
+    private class publishedLists extends AsyncTask<String, String, String> {
+
+
+        @Override
+        public String doInBackground(String... strings) {
+
+            PreparedStatement statement;
+            Object[] columns = new Object[3];
+
+            try {
+
+
+                statement = db_conn.prepareStatement("SELECT * FROM [dbo].[List] WHERE publisher_id = ?");
+                statement.setInt(1, userId);
+                ResultSet resultSet = statement.executeQuery();
+                while (resultSet.next()) {
+                    columns[0] = resultSet.getInt(1); // list id
+                    columns[1] = resultSet.getInt(2); //publisher id
+
+                    published.add(columns);
                 }
 
             } catch (SQLException throwables) {
