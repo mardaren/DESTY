@@ -87,7 +87,7 @@ public class SearchFragment extends Fragment{
         w2 = (City.equals("") || City.equals("City") || City.equals("City - Select Country"))?null:City;
         //System.out.println(w0+" "+ w1+" "+ w2);
 
-        ArrayList<Object[]> result = ((MainActivity) requireActivity()).search(w0,w1,w2);
+        //ArrayList<Object[]> result = ((MainActivity) requireActivity()).search(w0,w1,w2);
         //System.out.println(result.isEmpty());
         /*
         Object[] arr = (Object[]) result.get(0);
