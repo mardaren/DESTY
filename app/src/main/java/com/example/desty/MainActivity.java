@@ -183,16 +183,18 @@ public class MainActivity extends AppCompatActivity {
 
         @Override
         public String doInBackground(String... strings) {
-            System.out.println("burası");
+
             PreparedStatement statement;
 
             try {
-
-
                 statement = db_conn.prepareStatement("SELECT * FROM [dbo].[User] WHERE id = ?");
                 statement.setInt(1, userId);
                 ResultSet resultSet = statement.executeQuery();
-                username = resultSet.getString(2);
+                while (resultSet.next()) {
+
+
+                    username = resultSet.getString(2);
+                }
 
             } catch (SQLException throwables) {
                 throwables.printStackTrace();
@@ -210,7 +212,7 @@ public class MainActivity extends AppCompatActivity {
         public String doInBackground(String... strings) {
 
             PreparedStatement statement;
-            Object[] columns = new Object[8];
+
 
             try {
 
@@ -219,6 +221,7 @@ public class MainActivity extends AppCompatActivity {
 
                 ResultSet resultSet = statement.executeQuery();
                 while (resultSet.next()) {
+                    Object[] columns = new Object[8];
                     columns[0] = resultSet.getInt(1); // rota id
                     columns[1] = resultSet.getInt(2); //publisher id
                     columns[2] = resultSet.getString(3); // rota ismi
@@ -245,7 +248,7 @@ public class MainActivity extends AppCompatActivity {
         public String doInBackground(String... strings) {
 
             PreparedStatement statement;
-            Object[] columns = new Object[3];
+
 
             try {
 
@@ -254,9 +257,10 @@ public class MainActivity extends AppCompatActivity {
                 statement.setInt(1, userId);
                 ResultSet resultSet = statement.executeQuery();
                 while (resultSet.next()) {
+                    Object[] columns = new Object[3];
                     columns[0] = resultSet.getInt(1); // user_id
                     columns[1] = resultSet.getInt(2); //publisher id
-                    columns[2] = resultSet.getInt(4); //publisher name
+                    columns[2] = resultSet.getString(4); //publisher name
 
                     fall.add(columns);
                 }
@@ -276,7 +280,7 @@ public class MainActivity extends AppCompatActivity {
         public String doInBackground(String... strings) {
 
             PreparedStatement statement;
-            Object[] columns = new Object[3];
+
 
             try {
 
@@ -285,6 +289,7 @@ public class MainActivity extends AppCompatActivity {
                 statement.setInt(1, userId);
                 ResultSet resultSet = statement.executeQuery();
                 while (resultSet.next()) {
+                    Object[] columns = new Object[3];
                     columns[0] = resultSet.getInt(1); // list id
                     columns[1] = resultSet.getInt(2); //publisher id
                     columns[2] = resultSet.getInt(5); //user id
@@ -309,7 +314,7 @@ public class MainActivity extends AppCompatActivity {
         public String doInBackground(String... strings) {
 
             PreparedStatement statement;
-            Object[] columns = new Object[3];
+
 
             try {
 
@@ -318,6 +323,7 @@ public class MainActivity extends AppCompatActivity {
                 statement.setInt(1, userId);
                 ResultSet resultSet = statement.executeQuery();
                 while (resultSet.next()) {
+                    Object[] columns = new Object[3];
                     columns[0] = resultSet.getInt(1); // list id
                     columns[1] = resultSet.getInt(2); //publisher id
 
