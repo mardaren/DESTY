@@ -58,10 +58,11 @@ public class SearchFragment extends Fragment{
         buttonSearch = view.findViewById(R.id.button_search);
         buttonSearch.setOnClickListener(v -> {
             //query phase
-            sendQuery();
+            ArrayList<Object[]> result = sendQuery();
 
             // page phase
             Intent i = new Intent(getActivity(), SearchResultsActivity.class);
+            i.putExtra("result", result);
             startActivity(i);
         });
 
@@ -78,20 +79,25 @@ public class SearchFragment extends Fragment{
         citiesCountries.put("United States", cities_usa);
     }
 
-    private void sendQuery(){
-        String w0,w1,w2;
-        w0 = "" + editText_keyword.getText();
+    private ArrayList<Object[]> sendQuery(){
+        String key,countryName,cityName;
+        key = "" + editText_keyword.getText();
         //System.out.println(w0+" "+ Country+" "+ City);
-        w0 = (w0.equals(""))?null:w0;
-        w1 = (Country.equals(""))?null:Country;
-        w2 = (City.equals("") || City.equals("City") || City.equals("City - Select Country"))?null:City;
-        //System.out.println(w0+" "+ w1+" "+ w2);
+        key = (key.equals(""))?null:key;
+        countryName = (Country.equals(""))?null:Country;
+        cityName = (City.equals("") || City.equals("City") || City.equals("City - Select Country"))?null:City;
+        System.out.println("Query created: "+countryName+" "+ cityName+" "+key);
 
-        ArrayList<Object[]> result = ((MainActivity) requireActivity()).search(w0,w1,w2);
-        //System.out.println(result.isEmpty());
-        /*
-        Object[] arr = (Object[]) result.get(0);
-        System.out.println((String) arr[0]);*/
+        ArrayList<Object[]> result = ((MainActivity) requireActivity()).search(countryName,cityName,key);
+
+        /*for(Object[] a:result){
+            for(int j=0;j<8;j++){
+                System.out.print((a[j].toString()) + "-");
+            }
+            System.out.println();
+        }*/
+
+        return result;
     }
 
     private class PSpinner {

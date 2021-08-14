@@ -24,6 +24,7 @@ import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.util.ArrayList;
+import java.util.concurrent.ExecutionException;
 
 public class MainActivity extends AppCompatActivity {
 
@@ -70,21 +71,28 @@ public class MainActivity extends AppCompatActivity {
         }
     }
 
-    public ArrayList<Object[]> search(String keyword, String country, String city){
-        AllSearch search = new AllSearch(keyword, country, city);
-        search.execute();
+    public ArrayList<Object[]> search(String country, String city,String keyword){
+        AllSearch search = new AllSearch(country, city, keyword);
+
+        try {
+            search.execute().get();
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+
         return search.table;
     }
 
     private class  AllSearch extends AsyncTask<String, String, String> {
         String countryName,cityName,tag;
-        ArrayList<Object[]> table = new ArrayList<>();
+        ArrayList<Object[]> table;
 
         @Override
         protected String doInBackground(String... strings) {
             PreparedStatement statement;
             ResultSet resultSet;
             String query;
+
             try {
                 if(countryName!=null && cityName!=null && tag!=null){
                     query = "SELECT * FROM [dbo].[Route] WHERE country like ? and city like ? and route_name like ?";
@@ -105,26 +113,18 @@ public class MainActivity extends AppCompatActivity {
                     statement.setString(1, countryName+"%");
                     statement.setString(2, tag+"%");
                 }
-                else if(cityName!=null && tag!=null){
-                    query = "SELECT * FROM [dbo].[Route] WHERE  city like ? and route_name like ?";
-                    statement = db_conn.prepareStatement(query);
-                    statement.setString(1, cityName+"%");
-                    statement.setString(2, tag+"%");
-                }
                 else if(countryName != null){
                     query = "SELECT * FROM [dbo].[Route] WHERE country like ? ";
                     statement = db_conn.prepareStatement(query);
                     statement.setString(1, countryName+"%");
                 }
-                else if(cityName != null){
-                    query = "SELECT * FROM [dbo].[Route] WHERE city like ? ";
-                    statement = db_conn.prepareStatement(query);
-                    statement.setString(1, cityName+"%");
-                }
-                else{
+                else if(tag!=null){
                     query = "SELECT * FROM [dbo].[Route] WHERE route_name like ?";
                     statement = db_conn.prepareStatement(query);
                     statement.setString(1, tag+"%");
+                }
+                else {
+                    return null;
                 }
                 resultSet = statement.executeQuery();
                 Object[] tuple = new Object[8];
@@ -142,13 +142,20 @@ public class MainActivity extends AppCompatActivity {
             } catch (SQLException throwables) {
                 throwables.printStackTrace();
             }
-
             return null;
         }
+
+
+        @Override
+        protected void onPostExecute(String s) {
+            super.onPostExecute(s);
+        }
+
         public AllSearch(String countryName,String cityName,String tag){
             this.countryName = countryName;
             this.cityName = cityName;
             this.tag = tag;
+            this.table = new ArrayList<Object[]>();
         }
     }
 }
