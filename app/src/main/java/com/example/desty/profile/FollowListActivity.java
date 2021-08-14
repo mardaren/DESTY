@@ -6,7 +6,7 @@ import android.os.Bundle;
 
 import com.example.desty.R;
 
-public class FollowlistActivity extends AppCompatActivity {
+public class FollowListActivity extends AppCompatActivity {
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {

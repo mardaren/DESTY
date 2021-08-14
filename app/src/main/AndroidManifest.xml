@@ -14,13 +14,12 @@
         android:roundIcon="@mipmap/ic_launcher_round"
         android:supportsRtl="true"
         android:theme="@style/Theme.DESTY">
-        <activity android:name=".SearchResultsActivity"></activity>
+        <activity android:name=".SearchResultsActivity" />
         <activity android:name=".profile.EditActivity" />
         <activity android:name=".profile.RoutesActivity" />
-        <activity android:name=".profile.FollowlistActivity" />
+        <activity android:name=".profile.FollowListActivity" />
         <activity android:name=".profile.ListsActivity" />
         <activity android:name=".LocationActivity" />
-        <activity android:name=".MapsActivity" />
         <activity android:name=".MainActivity" />
         <activity android:name=".LoginActivity" />
         <activity

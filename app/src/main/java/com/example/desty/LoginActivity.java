@@ -74,7 +74,7 @@ public class LoginActivity extends AppCompatActivity {
             String conn_url;
 
             try {
-                conn_url = BuildConfig.DB_URL;
+                conn_url = BuildConfig.db_url;
                 Class.forName("net.sourceforge.jtds.jdbc.Driver");
                 connection = DriverManager.getConnection(conn_url);
                 if (connection != null) {
@@ -135,6 +135,11 @@ public class LoginActivity extends AppCompatActivity {
             if (status>0){
                 check = true;
                 Intent i = new Intent(LoginActivity.this,MainActivity.class);
+                try {
+                    db_conn.close();
+                } catch (SQLException throwables) {
+                    throwables.printStackTrace();
+                }
                 startActivity(i);
                 finish();
             }
@@ -189,6 +194,11 @@ public class LoginActivity extends AppCompatActivity {
             if (result) {
                 check = true;
                 Intent i = new Intent(LoginActivity.this, MainActivity.class);
+                try {
+                    db_conn.close();
+                } catch (SQLException throwables) {
+                    throwables.printStackTrace();
+                }
                 startActivity(i);
                 finish();
             }

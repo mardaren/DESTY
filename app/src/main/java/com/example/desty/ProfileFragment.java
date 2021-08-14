@@ -12,7 +12,7 @@ import androidx.annotation.Nullable;
 import androidx.fragment.app.Fragment;
 
 import com.example.desty.profile.EditActivity;
-import com.example.desty.profile.FollowlistActivity;
+import com.example.desty.profile.FollowListActivity;
 import com.example.desty.profile.ListsActivity;
 import com.example.desty.profile.RoutesActivity;
 
@@ -43,7 +43,7 @@ public class ProfileFragment extends Fragment {
         // followlist button
         buttonFollowList = view.findViewById(R.id.button_followlist);
         buttonFollowList.setOnClickListener(v -> {
-            Intent i = new Intent(getActivity(), FollowlistActivity.class);
+            Intent i = new Intent(getActivity(), FollowListActivity.class);
             startActivity(i);
         });
 

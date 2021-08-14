@@ -51,7 +51,7 @@ public class MainActivity extends AppCompatActivity {
             String conn_url;
 
             try {
-                conn_url = BuildConfig.DB_URL;
+                conn_url = BuildConfig.db_url;
                 Class.forName("net.sourceforge.jtds.jdbc.Driver");
                 connection = DriverManager.getConnection(conn_url);
                 if (connection != null) {
