@@ -321,13 +321,19 @@ public class MainActivity extends AppCompatActivity {
             try {
 
 
-                statement = db_conn.prepareStatement("SELECT * FROM [dbo].[List] WHERE publisher_id = ?");
+                statement = db_conn.prepareStatement("SELECT * FROM [dbo].[route] WHERE publisher_id = ?");
                 statement.setInt(1, userId);
                 ResultSet resultSet = statement.executeQuery();
                 while (resultSet.next()) {
-                    Object[] columns = new Object[3];
-                    columns[0] = resultSet.getInt(1); // list id
+                    Object[] columns = new Object[8];
+                    columns[0] = resultSet.getInt(1); // rota id
                     columns[1] = resultSet.getInt(2); //publisher id
+                    columns[2] = resultSet.getString(3); // rota ismi
+                    columns[3] = resultSet.getString(4); // tanımı
+                    columns[4] = resultSet.getInt(5); // ratingi
+                    columns[5] = resultSet.getInt(6); // izlenmesi
+                    columns[6] = resultSet.getString(7); // ülke
+                    columns[7] = resultSet.getString(8); // şehir
 
                     published.add(columns);
                 }
@@ -383,5 +389,87 @@ public class MainActivity extends AppCompatActivity {
 
     public void rotaPoints(int routeId){
         new MainActivity.routeToPoint(routeId).execute();
+    }
+    private class idToName extends AsyncTask<String, String, String> {
+
+        int inputId;
+        public idToName(int inputId){
+            this.inputId = inputId;
+
+        }
+        @Override
+        public String doInBackground(String... strings) {
+
+            PreparedStatement statement;
+            String cevap = null;
+
+            try {
+
+
+                statement = db_conn.prepareStatement("select  username from [dbo].[user] where id = ?");
+                statement.setInt(1, inputId);
+                ResultSet resultSet = statement.executeQuery();
+                while (resultSet.next()) {
+                    Object[] columns = new Object[6];
+                    cevap = resultSet.getString(1); // point id
+
+
+                }
+
+            } catch (SQLException throwables) {
+                throwables.printStackTrace();
+            }
+            return cevap;
+        }
+
+
+    }
+
+    public void idtoname(int usid){
+        new MainActivity.idToName(usid).execute();
+    }
+
+    //kullanıcı bilgilerini editler
+    private class edit extends AsyncTask<String, String, String> {
+        String name ,foto;
+        public edit(String name, String foto) {
+            this.name = name;
+            this.foto = foto;
+        }
+        @Override
+        public String doInBackground(String... strings) {
+
+            PreparedStatement statement;
+
+
+            try {
+                if (name != null && foto != null){
+                    statement = db_conn.prepareStatement("UPDATE [dbo].[User] SET username = ?, photo_url = ? WHERE id  = ?" );
+                    statement.setString(1, this.name);
+                    statement.setString(2, this.foto);
+                    statement.setInt(3, userId);
+
+                }
+                else if (name ==null && foto != null){
+                    statement = db_conn.prepareStatement("UPDATE [dbo].[User] SET  photo_url = ? WHERE id  = ?" );
+                    statement.setString(1, this.foto);
+                    statement.setInt(2, userId);
+
+                }
+                else {
+                    statement = db_conn.prepareStatement("UPDATE [dbo].[User] SET username = ? WHERE id  = ?");
+                    statement.setString(1, this.name);
+                    statement.setInt(2, userId);
+                }
+            } catch (SQLException throwables) {
+                throwables.printStackTrace();
+            }
+            return null;
+        }
+
+
+    }
+    public void editUser(String newname,String newfoto){
+        new MainActivity.edit(newname,newfoto).execute();
     }
 }
