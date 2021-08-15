@@ -10,7 +10,7 @@
         android:id="@+id/editKeyword"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:layout_marginTop="156dp"
+        android:layout_marginTop="108dp"
         android:ems="10"
         android:inputType="text"
         android:text=""
@@ -28,7 +28,7 @@
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toBottomOf="@+id/spinner_country"
-        app:layout_constraintVertical_bias="0.44" />
+        app:layout_constraintVertical_bias="0.293" />
 
     <Spinner
         android:id="@+id/spinner_country"
@@ -38,7 +38,7 @@
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintHorizontal_bias="0.498"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/editTextTextPersonName" />
+        app:layout_constraintTop_toBottomOf="@+id/editKeyword" />
 
     <Spinner
         android:id="@+id/spinner_city"

@@ -6,6 +6,9 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.Button;
+import android.widget.ImageView;
+import android.widget.ListView;
+import android.widget.TextView;
 
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
@@ -21,6 +24,8 @@ import org.jetbrains.annotations.NotNull;
 public class ProfileFragment extends Fragment {
 
     Button buttonLists, buttonFollowList, buttonRoutes, buttonEdit;
+    TextView profileName;
+    ImageView imageProfile;
 
     @Nullable
     @org.jetbrains.annotations.Nullable
@@ -32,6 +37,14 @@ public class ProfileFragment extends Fragment {
     @Override
     public void onViewCreated(@NonNull @NotNull View view, @Nullable @org.jetbrains.annotations.Nullable Bundle savedInstanceState) {
         super.onViewCreated(view, savedInstanceState);
+
+        //profile info
+        profileName = (TextView) view.findViewById(R.id.text_profilename);
+        imageProfile = (ImageView) view.findViewById(R.id.image_profile);
+        String[] profileInfo = ((MainActivity) requireActivity()).getUserInfo();
+        profileName.setText(profileInfo[0]);
+        // eksik*******************************************************************
+        //imageProfile.setImage();
 
         // lists button
         buttonLists = view.findViewById(R.id.button_lists);
@@ -61,4 +74,5 @@ public class ProfileFragment extends Fragment {
             startActivity(i);
         });
     }
+
 }
