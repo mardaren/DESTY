@@ -44,6 +44,7 @@ public class MainActivity extends AppCompatActivity {
     Stack top10 = new Stack();
     Stack userList = new Stack();
     Stack published = new Stack();
+    Stack point = new Stack();
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -54,6 +55,7 @@ public class MainActivity extends AppCompatActivity {
             s = new MainActivity.getTen().execute().get();
             s = new MainActivity.useLis().execute().get();
             s = new MainActivity.fallows().execute().get();
+            rotaPoints(1);
         } catch (ExecutionException e) {
             e.printStackTrace();
         } catch (InterruptedException e) {
@@ -339,5 +341,47 @@ public class MainActivity extends AppCompatActivity {
 
     }
 
+    // rota id si alıp pointler dönücek
+    private class routeToPoint extends AsyncTask<String, String, String> {
 
+        int routeId;
+        public routeToPoint(int routeid){
+            routeId = routeid;
+
+        }
+        @Override
+        public String doInBackground(String... strings) {
+
+            PreparedStatement statement;
+
+
+            try {
+
+
+                statement = db_conn.prepareStatement("select  * from [dbo].[point] where route_id = ?");
+                statement.setInt(1, routeId);
+                ResultSet resultSet = statement.executeQuery();
+                while (resultSet.next()) {
+                    Object[] columns = new Object[6];
+                    columns[0] = resultSet.getInt(1); // point id
+                    columns[1] = resultSet.getInt(2); //rota  id
+                    columns[2] = resultSet.getString(3); //isim
+                    columns[3] = resultSet.getString(4); //tanım
+                    columns[4] = resultSet.getBigDecimal(5); //latitude
+                    columns[5] = resultSet.getBigDecimal(6); //longitude
+                    point.add(columns);
+                }
+
+            } catch (SQLException throwables) {
+                throwables.printStackTrace();
+            }
+            return null;
+        }
+
+
+    }
+
+    public void rotaPoints(int routeId){
+        new MainActivity.routeToPoint(routeId).execute();
+    }
 }
