@@ -37,17 +37,6 @@ public class SearchResultsActivity extends AppCompatActivity {
 
         listResults = (ListView) findViewById(R.id.list_results);
 
-        /*ArrayList<String> arrayList = new ArrayList<>();
-
-        arrayList.add("a");
-        arrayList.add("b");
-        arrayList.add("c");
-        arrayList.add("d");
-        arrayList.add("e");
-        arrayList.add("f");
-
-        ArrayAdapter adapter = new ArrayAdapter(this, android.R.layout.simple_list_item_1,arrayList);*/
-
         ArrayAdapter adapter = new ArrayAdapter(this, android.R.layout.simple_list_item_1,headers);
 
         listResults.setAdapter(adapter);

@@ -40,16 +40,15 @@ public class MainActivity extends AppCompatActivity {
     //Stack top10 = new Stack();
     Stack userList = new Stack();
     Stack published = new Stack();
+
+    private static MainActivity instance;
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         userId =getIntent().getIntExtra("UserId",1);
         try {
             Connection b = new Connect().execute().get();
-            /*String s = new MainActivity.userInfo().execute().get();
-            s = new MainActivity.getTen().execute().get();
-            s = new MainActivity.useLis().execute().get();
-            s = new MainActivity.fallows().execute().get();*/
         } catch (ExecutionException e) {
             e.printStackTrace();
         } catch (InterruptedException e) {
@@ -64,12 +63,18 @@ public class MainActivity extends AppCompatActivity {
         viewPager.setAdapter(sectionsPagerAdapter);
         TabLayout tabs = binding.tabs;
         tabs.setupWithViewPager(viewPager);
+        instance = this;
+    }
 
+    public static MainActivity getInstance() {
+        return instance;
     }
 
     ///////////////////
     // QUERY METHODS //
     ///////////////////
+
+    //*****NULL KONTROLLERI YAPILMALI***************************************************
 
     public ArrayList<Object[]> getHomepageList(){
         GetTen t = new GetTen();
@@ -83,13 +88,11 @@ public class MainActivity extends AppCompatActivity {
 
     public ArrayList<Object[]> search(String country, String city,String keyword){
         AllSearch search = new AllSearch(country, city, keyword);
-
         try {
             search.execute().get();
         } catch (Exception e) {
             e.printStackTrace();
         }
-
         return search.table;
     }
 
@@ -103,6 +106,16 @@ public class MainActivity extends AppCompatActivity {
         }
 
         return info.result;
+    }
+
+    public ArrayList<Object[]> getUserLists(){
+        UserLists ul = new UserLists();
+        try {
+            ul.execute().get();
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+        return ul.table;
     }
 
     ////////////////////////////////
@@ -274,7 +287,38 @@ public class MainActivity extends AppCompatActivity {
 
     }
 
+    private class UserLists extends AsyncTask<String, String, String> {
 
+        ArrayList<Object[]> table;
+
+        public UserLists(){
+            table = new ArrayList<>();
+        }
+
+        @Override
+        public String doInBackground(String... strings) {
+            PreparedStatement statement;
+            try {
+                statement = db_conn.prepareStatement("select  * from [dbo].[list] as l left  join [dbo].[UsersLists] as ul on ul.list_id = l.list_id where user_id = ?");
+                statement.setInt(1, userId);
+                ResultSet resultSet = statement.executeQuery();
+                while (resultSet.next()) {
+                    Object[] columns = new Object[3];
+                    columns[0] = resultSet.getInt(1); // list id
+                    columns[1] = resultSet.getInt(2); //publisher id
+                    columns[2] = resultSet.getInt(5); //user id
+
+                    table.add(columns);
+                }
+
+            } catch (SQLException throwables) {
+                throwables.printStackTrace();
+            }
+            return null;
+        }
+
+
+    }
 
     private class Follows extends AsyncTask<String, String, String> {
 
@@ -298,39 +342,6 @@ public class MainActivity extends AppCompatActivity {
                     columns[2] = resultSet.getString(4); //publisher name
 
                     fall.add(columns);
-                }
-
-            } catch (SQLException throwables) {
-                throwables.printStackTrace();
-            }
-            return null;
-        }
-
-
-    }
-
-    private class UseLis extends AsyncTask<String, String, String> {
-
-
-        @Override
-        public String doInBackground(String... strings) {
-
-            PreparedStatement statement;
-
-
-            try {
-
-
-                statement = db_conn.prepareStatement("select  * from [dbo].[list] as l left  join [dbo].[UsersLists] as ul on ul.list_id = l.list_id where user_id = ?");
-                statement.setInt(1, userId);
-                ResultSet resultSet = statement.executeQuery();
-                while (resultSet.next()) {
-                    Object[] columns = new Object[3];
-                    columns[0] = resultSet.getInt(1); // list id
-                    columns[1] = resultSet.getInt(2); //publisher id
-                    columns[2] = resultSet.getInt(5); //user id
-
-                    userList.add(columns);
                 }
 
             } catch (SQLException throwables) {
