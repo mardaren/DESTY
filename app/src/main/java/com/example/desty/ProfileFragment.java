@@ -7,7 +7,6 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.Button;
 import android.widget.ImageView;
-import android.widget.ListView;
 import android.widget.TextView;
 
 import androidx.annotation.NonNull;
@@ -17,7 +16,6 @@ import androidx.fragment.app.Fragment;
 import com.example.desty.profile.EditActivity;
 import com.example.desty.profile.FollowListActivity;
 import com.example.desty.profile.ListsActivity;
-import com.example.desty.profile.RoutesActivity;
 
 import org.jetbrains.annotations.NotNull;
 
@@ -63,7 +61,8 @@ public class ProfileFragment extends Fragment {
         // routes button
         buttonRoutes = view.findViewById(R.id.button_routes);
         buttonRoutes.setOnClickListener(v -> {
-            Intent i = new Intent(getActivity(), RoutesActivity.class);
+            Intent i = new Intent(getActivity(), ListActivity.class);
+            i.putExtra("mode", "publisher");
             startActivity(i);
         });
 

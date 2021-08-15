@@ -1,16 +1,14 @@
-package com.example.desty.profile;
+package com.example.desty;
 
 import androidx.appcompat.app.AppCompatActivity;
 
 import android.os.Bundle;
 
-import com.example.desty.R;
-
-public class RoutesActivity extends AppCompatActivity {
+public class RouteActivity extends AppCompatActivity {
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        setContentView(R.layout.activity_routes);
+        setContentView(R.layout.activity_route);
     }
 }

@@ -118,6 +118,26 @@ public class MainActivity extends AppCompatActivity {
         return ul.table;
     }
 
+    public ArrayList<Object[]> getFollowlist(){
+        Follows f = new Follows();
+        try {
+            f.execute().get();
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+        return f.table;
+    }
+
+    public ArrayList<Object[]> getProfileRoutes(){
+        PublishedLists pl = new PublishedLists();
+        try {
+            pl.execute().get();
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+        return pl.table;
+    }
+
     ////////////////////////////////
     /// CONNECTION-QUERY CLASSES ///
     ////////////////////////////////
@@ -322,16 +342,16 @@ public class MainActivity extends AppCompatActivity {
 
     private class Follows extends AsyncTask<String, String, String> {
 
+        ArrayList<Object[]> table;
+
+        public Follows(){
+            table = new ArrayList<>();
+        }
 
         @Override
         public String doInBackground(String... strings) {
-
             PreparedStatement statement;
-
-
             try {
-
-
                 statement = db_conn.prepareStatement("select  * from [dbo].[Followlists] inner join [dbo].[User] on publisher_id = id where user_id = ?");
                 statement.setInt(1, userId);
                 ResultSet resultSet = statement.executeQuery();
@@ -340,8 +360,7 @@ public class MainActivity extends AppCompatActivity {
                     columns[0] = resultSet.getInt(1); // user_id
                     columns[1] = resultSet.getInt(2); //publisher id
                     columns[2] = resultSet.getString(4); //publisher name
-
-                    fall.add(columns);
+                    table.add(columns);
                 }
 
             } catch (SQLException throwables) {
@@ -349,23 +368,22 @@ public class MainActivity extends AppCompatActivity {
             }
             return null;
         }
-
-
     }
 
     // eğer kullanıc publisher değil ise null doldurucak publisher ise publisher id ve list id döncek
-    private class publishedLists extends AsyncTask<String, String, String> {
+    private class PublishedLists extends AsyncTask<String, String, String> {
 
+        ArrayList<Object[]> table;
+
+        public PublishedLists(){
+            table = new ArrayList<>();
+        }
 
         @Override
         public String doInBackground(String... strings) {
-
             PreparedStatement statement;
 
-
             try {
-
-
                 statement = db_conn.prepareStatement("SELECT * FROM [dbo].[List] WHERE publisher_id = ?");
                 statement.setInt(1, userId);
                 ResultSet resultSet = statement.executeQuery();
@@ -373,8 +391,7 @@ public class MainActivity extends AppCompatActivity {
                     Object[] columns = new Object[3];
                     columns[0] = resultSet.getInt(1); // list id
                     columns[1] = resultSet.getInt(2); //publisher id
-
-                    published.add(columns);
+                    table.add(columns);
                 }
 
             } catch (SQLException throwables) {
