@@ -194,7 +194,16 @@ public class MainActivity extends AppCompatActivity {
     public void follow(int pid){
         FollowPublisher fp = new FollowPublisher(userId,pid);
         try {
-            fp.execute().get();
+            fp.execute();
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+    }
+
+    public void edit(String name, String photo){
+        Edit ed = new Edit(name,photo);
+        try {
+            ed.execute();
         } catch (Exception e) {
             e.printStackTrace();
         }
