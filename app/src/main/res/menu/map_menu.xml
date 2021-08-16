@@ -12,8 +12,12 @@
 -->
 <menu xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto">
+<!--    <item-->
+<!--        android:id="@+id/option_get_place"-->
+<!--        android:title="@string/option_get_place"-->
+<!--        app:showAsAction="always"/>-->
     <item
-        android:id="@+id/option_get_place"
-        android:title="@string/option_get_place"
+        android:id="@+id/save_route"
+        android:title="@string/save_route"
         app:showAsAction="always"/>
 </menu>
