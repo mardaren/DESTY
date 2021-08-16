@@ -56,7 +56,7 @@ public class MainActivity extends AppCompatActivity {
             s = new MainActivity.getTen().execute().get();
             s = new MainActivity.useLis().execute().get();
             s = new MainActivity.fallows().execute().get();
-
+            new MainActivity.AddRouteToList(2,2).execute().get();
             rotaPoints(1);
         } catch (ExecutionException e) {
             e.printStackTrace();
@@ -551,16 +551,10 @@ public class MainActivity extends AppCompatActivity {
         public Integer doInBackground(String... strings) {
             PreparedStatement statement;
             try {
-                statement = db_conn.prepareStatement("Select* from [dbo].[ListsRoutes] where list_id = ? AND route_id=?" );
-                statement.setInt(1, listId);
-                statement.setInt(2, rota_id);
-                ResultSet resultSet = statement.executeQuery();
-                int d = resultSet.getInt(1); // eğer bundan daha önce eklendi ise catchin içine düşüyor ve ekleme yapmıyor
-
                     statement = db_conn.prepareStatement("INSERT INTO [dbo].[ListsRoutes] values(?,?)");
                     statement.setInt(1, listId);
                     statement.setInt(2, rota_id);
-                    resultSet = statement.executeQuery();
+                    ResultSet resultSet = statement.executeQuery();
 
 
             } catch (SQLException throwables) {
