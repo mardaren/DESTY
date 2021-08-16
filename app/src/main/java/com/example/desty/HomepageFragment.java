@@ -9,7 +9,7 @@ import android.widget.AdapterView;
 import android.widget.ArrayAdapter;
 import android.widget.Button;
 import android.widget.ListView;
-import android.widget.Toast;
+
 
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
@@ -51,7 +51,7 @@ public class HomepageFragment extends Fragment {
         listHomepage.setOnItemClickListener(new AdapterView.OnItemClickListener() {
             @Override
             public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
-                Toast.makeText(getContext(),"clicked item "+position+ " "+ headers.get(position), Toast.LENGTH_SHORT).show();
+                //Toast.makeText(getContext(),"clicked item "+position+ " "+ headers.get(position), Toast.LENGTH_SHORT).show();
                 Intent i = new Intent(getActivity(), RouteActivity.class);
                 i.putExtra("id", result.get(position));
                 startActivity(i);

@@ -40,7 +40,7 @@ public class PublisherActivity extends AppCompatActivity {
         pubName = (TextView) findViewById(R.id.text_publishername);
         pubName.setText(info[1].toString());
 
-        rating = (TextView) findViewById(R.id.text_rating);
+        rating = (TextView) findViewById(R.id.text_rating_publisher);
         rating.setText(info[5].toString());
 
         bio = (TextView) findViewById(R.id.text_bio);
