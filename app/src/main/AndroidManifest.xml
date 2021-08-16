@@ -14,7 +14,8 @@
         android:roundIcon="@mipmap/ic_launcher_round"
         android:supportsRtl="true"
         android:theme="@style/Theme.DESTY">
-        <activity android:name=".PublisherActivity"></activity>
+        <activity android:name=".CommentsActivity"></activity>
+        <activity android:name=".PublisherActivity" />
         <activity android:name=".RouteActivity" />
         <activity android:name=".ListActivity" />
         <activity android:name=".SearchResultsActivity" />

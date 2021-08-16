@@ -2,6 +2,7 @@ package com.example.desty;
 
 import androidx.appcompat.app.AppCompatActivity;
 
+import android.content.Context;
 import android.content.Intent;
 import android.os.Bundle;
 import android.view.View;
@@ -15,10 +16,12 @@ import java.util.ArrayList;
 public class SearchResultsActivity extends AppCompatActivity {
 
     ListView listResults;
+    private Context context;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
+        context = this;
         setContentView(R.layout.activity_search_results);
 
         //get result arraylist
@@ -45,6 +48,9 @@ public class SearchResultsActivity extends AppCompatActivity {
             @Override
             public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
                 Toast.makeText(SearchResultsActivity.this,"clicked item "+position+ " "+ headers.get(position).toString(), Toast.LENGTH_SHORT).show();
+                Intent i = new Intent(context, RouteActivity.class);
+                i.putExtra("id", headers.get(position));
+                startActivity(i);
             }
         });
     }

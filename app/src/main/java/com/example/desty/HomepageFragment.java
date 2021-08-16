@@ -34,9 +34,10 @@ public class HomepageFragment extends Fragment {
     @Override
     public void onViewCreated(@NonNull @NotNull View view, @Nullable @org.jetbrains.annotations.Nullable Bundle savedInstanceState) {
         super.onViewCreated(view, savedInstanceState);
-        mapButton = view.findViewById(R.id.map_button);
+        mapButton = view.findViewById(R.id.button_add);
         mapButton.setOnClickListener(v -> {
-            Intent i = new Intent(getActivity(), LocationActivity.class);
+            //Intent i = new Intent(getActivity(), LocationActivity.class);
+            Intent i = new Intent(getActivity(), RouteActivity.class);
             startActivity(i);
         });
 
@@ -51,6 +52,9 @@ public class HomepageFragment extends Fragment {
             @Override
             public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
                 Toast.makeText(getContext(),"clicked item "+position+ " "+ headers.get(position), Toast.LENGTH_SHORT).show();
+                Intent i = new Intent(getActivity(), RouteActivity.class);
+                i.putExtra("id", headers.get(position));
+                startActivity(i);
             }
         });
     }

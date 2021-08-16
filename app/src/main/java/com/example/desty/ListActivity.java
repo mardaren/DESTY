@@ -2,6 +2,8 @@ package com.example.desty;
 
 import androidx.appcompat.app.AppCompatActivity;
 
+import android.content.Context;
+import android.content.Intent;
 import android.os.Bundle;
 import android.view.View;
 import android.widget.AdapterView;
@@ -17,11 +19,13 @@ public class ListActivity extends AppCompatActivity {
 
     ListView listRoutes;
     ArrayList<String> headers;
+    private Context context;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_list);
+        context = this;
 
         listRoutes = (ListView) findViewById(R.id.list_routes);
         ///dinamik olmalı
@@ -44,7 +48,10 @@ public class ListActivity extends AppCompatActivity {
         listRoutes.setOnItemClickListener(new AdapterView.OnItemClickListener() {
             @Override
             public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
-                Toast.makeText(ListActivity.this,"clicked item "+position+ " "+ headers.get(position).toString(), Toast.LENGTH_SHORT).show();
+                Toast.makeText(ListActivity.this,"clicked item "+position+ " "+ headers.get(position), Toast.LENGTH_SHORT).show();
+                Intent i = new Intent(context, RouteActivity.class);
+                i.putExtra("id", headers.get(position));//burası degisebilir, dikkat et*************************
+                startActivity(i);
             }
         });
     }
@@ -54,7 +61,7 @@ public class ListActivity extends AppCompatActivity {
         ArrayList<Object[]> result = MainActivity.getInstance().getProfileRoutes();
         ArrayList<String> headers = new ArrayList<>();
         for (Object[] a:result){
-            headers.add(a[0].toString());//***********************************************************
+            headers.add("List id: " + a[0].toString());//***********************************************************
             /// burası degisecek
         }
         return headers;
