@@ -20,6 +20,7 @@ public class ListActivity extends AppCompatActivity {
     private ListView listRoutes;
     private ArrayList<Object[]> result;
     private Context context;
+    private int listId;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -38,6 +39,9 @@ public class ListActivity extends AppCompatActivity {
         if (mode=="publisher"){
             headers = getProfileRoutes();
         }
+        else if (mode=="user"){
+            headers = getRoutes();
+        }
         else {
             return;
         }
@@ -48,7 +52,6 @@ public class ListActivity extends AppCompatActivity {
         listRoutes.setOnItemClickListener(new AdapterView.OnItemClickListener() {
             @Override
             public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
-                Toast.makeText(ListActivity.this,"clicked item "+position+ " "+ headers.get(position), Toast.LENGTH_SHORT).show();
                 Intent i = new Intent(context, RouteActivity.class);
                 i.putExtra("id", result.get(position));
                 startActivity(i);
@@ -59,6 +62,15 @@ public class ListActivity extends AppCompatActivity {
     private ArrayList<String> getProfileRoutes(){
         /// null ise işlem yapılmalı **************************************************
         result = MainActivity.getInstance().getProfileRoutes();
+        ArrayList<String> headers = new ArrayList<>();
+        for (Object[] a:result)
+            headers.add("List id: " + a[2].toString());
+        return headers;
+    }
+
+    private ArrayList<String> getRoutes(){
+        /// null ise işlem yapılmalı **************************************************
+        result = MainActivity.getInstance().getRoutesFromList(listId);
         ArrayList<String> headers = new ArrayList<>();
         for (Object[] a:result)
             headers.add("List id: " + a[2].toString());

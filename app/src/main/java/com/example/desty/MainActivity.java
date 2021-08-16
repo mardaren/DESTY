@@ -33,13 +33,6 @@ public class MainActivity extends AppCompatActivity {
     private ActivityMainBinding binding;
     Connection db_conn = null;
     int userId = 0;
-    String username;
-    Image userIm;
-    boolean pub = false;
-    Stack fall = new Stack();
-    //Stack top10 = new Stack();
-    Stack userList = new Stack();
-    Stack published = new Stack();
 
     private static MainActivity instance;
 
@@ -136,6 +129,47 @@ public class MainActivity extends AppCompatActivity {
             e.printStackTrace();
         }
         return pl.table;
+    }
+
+    public ArrayList<Object[]> getRoutesFromList(int listId){
+        ArrayList<Object[]> result = new ArrayList<>();
+        ListRoutes lr = new ListRoutes(listId);
+        try {
+            lr.execute().get();
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+        ArrayList<Integer> route_ids = lr.table;
+        for(int id:route_ids){
+            RouteInfo info = new RouteInfo(id);
+            try {
+                info.execute().get();
+            } catch (Exception e) {
+                e.printStackTrace();
+            }
+            result.add(info.tuple);
+        }
+        return result;
+    }
+
+    public String idToName(int usid){
+        IDtoName idt = new IDtoName(usid);
+        try {
+            idt.execute().get();
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+        return idt.username;
+    }
+
+    //not implemented *********************************************************************
+    public void rotaPoints(int routeId){
+        new MainActivity.routeToPoint(routeId).execute();
+    }
+
+    //not implemented *********************************************************************
+    public void editUser(String newname,String newfoto){
+        new MainActivity.edit(newname,newfoto).execute();
     }
 
     ////////////////////////////////
@@ -409,6 +443,65 @@ public class MainActivity extends AppCompatActivity {
 
     }
 
+    //listin içinde bulunan rotaların idsini döner
+    private class ListRoutes extends AsyncTask<String, String, Stack> {
+        int listId;
+        ArrayList<Integer> table = new ArrayList<Integer>();
+
+        public ListRoutes(int listId) {
+            this.listId = listId;
+        }
+        @Override
+        public Stack doInBackground(String... strings) {
+            PreparedStatement statement;
+            try {
+                statement = db_conn.prepareStatement("select  route_id from [dbo].[ListsRoutes] where list_id = ?" );
+                statement.setInt(1, listId);
+                ResultSet resultSet = statement.executeQuery();
+                while (resultSet.next())
+                    table.add(resultSet.getInt(1));
+            } catch (SQLException throwables) {
+                throwables.printStackTrace();
+            }
+            return null;
+        }
+    }
+
+    //rota bilgilerin döner rota idsi ile
+    private class RouteInfo extends AsyncTask<String, String, Object[]> {
+        int rotaId;
+        Object[] tuple;
+
+        public RouteInfo(int rotaId) {
+            this.rotaId = rotaId;
+            tuple = new Object[8];
+        }
+        @Override
+        public Object[] doInBackground(String... strings) {
+
+            PreparedStatement statement;
+
+            try {
+                statement = db_conn.prepareStatement("select  * from [dbo].[Route] where route_id = ?" );
+                statement.setInt(1, rotaId);
+                ResultSet resultSet = statement.executeQuery();
+                while (resultSet.next()) {
+                    tuple[0] = resultSet.getInt(1); // rota id
+                    tuple[1] = resultSet.getInt(2); // publisher id
+                    tuple[2] = resultSet.getString(3); // rota name
+                    tuple[3] = resultSet.getString(4); // tanım
+                    tuple[4] = resultSet.getInt(5); // rating
+                    tuple[5] = resultSet.getInt(6); // wievs
+                    tuple[6] = resultSet.getString(7); // ülke
+                    tuple[7] = resultSet.getString(8); // şehir
+                }
+            } catch (SQLException throwables) {
+                throwables.printStackTrace();
+            }
+            return tuple;
+        }
+    }
+
     // rota id si alıp pointler dönücek
     private class routeToPoint extends AsyncTask<String, String, String> {
 
@@ -449,47 +542,31 @@ public class MainActivity extends AppCompatActivity {
 
     }
 
-    public void rotaPoints(int routeId){
-        new MainActivity.routeToPoint(routeId).execute();
-    }
-
-    private class idToName extends AsyncTask<String, String, String> {
+    private class IDtoName extends AsyncTask<String, String, String> {
 
         int inputId;
-        public idToName(int inputId){
+        String username;
+
+        public IDtoName(int inputId){
             this.inputId = inputId;
 
         }
         @Override
         public String doInBackground(String... strings) {
-
             PreparedStatement statement;
-            String cevap = null;
-
             try {
-
-
                 statement = db_conn.prepareStatement("select  username from [dbo].[user] where id = ?");
                 statement.setInt(1, inputId);
                 ResultSet resultSet = statement.executeQuery();
                 while (resultSet.next()) {
                     Object[] columns = new Object[6];
-                    cevap = resultSet.getString(1); // point id
-
-
+                    username = resultSet.getString(1); // point id
                 }
-
             } catch (SQLException throwables) {
                 throwables.printStackTrace();
             }
-            return cevap;
+            return username;
         }
-
-
-    }
-
-    public void idtoname(int usid){
-        new MainActivity.idToName(usid).execute();
     }
 
     //kullanıcı bilgilerini editler
@@ -533,8 +610,6 @@ public class MainActivity extends AppCompatActivity {
 
     }
 
-    public void editUser(String newname,String newfoto){
-        new MainActivity.edit(newname,newfoto).execute();
-    }
+
 
 }
