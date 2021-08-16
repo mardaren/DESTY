@@ -10,25 +10,22 @@
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:text="add a route"
-        app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toTopOf="parent"></Button>
-
-    <LinearLayout
-        android:id="@+id/linearLayout"
-        android:layout_width="426dp"
-        android:layout_height="686dp"
-        android:orientation="horizontal"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/button_add">
+        app:layout_constraintHorizontal_bias="0.498"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@+id/list_homepage"
+        app:layout_constraintVertical_bias="0.274"></Button>
 
-        <ListView
-            android:id="@+id/list_homepage"
-            android:layout_width="409dp"
-            android:layout_height="681dp">
+    <ListView
+        android:id="@+id/list_homepage"
+        android:layout_width="411dp"
+        android:layout_height="570dp"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintHorizontal_bias="0.0"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="parent">
 
-        </ListView>
-    </LinearLayout>
+    </ListView>
 
 </androidx.constraintlayout.widget.ConstraintLayout>

@@ -62,7 +62,7 @@ public class ProfileFragment extends Fragment {
         buttonRoutes = view.findViewById(R.id.button_routes);
         buttonRoutes.setOnClickListener(v -> {
             Intent i = new Intent(getActivity(), ListActivity.class);
-            i.putExtra("mode", "publisher");
+            i.putExtra("mode", "profile");
             startActivity(i);
         });
 

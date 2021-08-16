@@ -122,7 +122,17 @@ public class MainActivity extends AppCompatActivity {
     }
 
     public ArrayList<Object[]> getProfileRoutes(){
-        PublishedRoutes pl = new PublishedRoutes();
+        PublishedRoutes pl = new PublishedRoutes(userId);
+        try {
+            pl.execute().get();
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+        return pl.table;
+    }
+
+    public ArrayList<Object[]> getPublisherRoutes(int id){
+        PublishedRoutes pl = new PublishedRoutes(id);
         try {
             pl.execute().get();
         } catch (Exception e) {
@@ -163,13 +173,31 @@ public class MainActivity extends AppCompatActivity {
     }
 
     //not implemented *********************************************************************
-    public void rotaPoints(int routeId){
-        new MainActivity.routeToPoint(routeId).execute();
-    }
+    public void rotaPoints(int routeId){}
 
     //not implemented *********************************************************************
-    public void editUser(String newname,String newfoto){
-        new MainActivity.edit(newname,newfoto).execute();
+    public void editUser(String newName,String newPhoto){}
+
+    //not implemented *********************************************************************
+    public void addRoute(Object[] info){}
+
+    public Object[] getPublisherInfo(int id){
+        PublisherInfo pub = new PublisherInfo(id);
+        try {
+            pub.execute().get();
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+        return pub.columns;
+    }
+
+    public void follow(int pid){
+        FollowPublisher fp = new FollowPublisher(userId,pid);
+        try {
+            fp.execute().get();
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
     }
 
     ////////////////////////////////
@@ -346,6 +374,7 @@ public class MainActivity extends AppCompatActivity {
         ArrayList<Object[]> table;
 
         public UserLists(){
+            super();
             table = new ArrayList<>();
         }
 
@@ -357,10 +386,11 @@ public class MainActivity extends AppCompatActivity {
                 statement.setInt(1, userId);
                 ResultSet resultSet = statement.executeQuery();
                 while (resultSet.next()) {
-                    Object[] columns = new Object[3];
+                    Object[] columns = new Object[4];
                     columns[0] = resultSet.getInt(1); // list id
                     columns[1] = resultSet.getInt(2); //publisher id
-                    columns[2] = resultSet.getInt(5); //user id
+                    columns[2] = resultSet.getString(3); // list name
+                    columns[3] = resultSet.getInt(5); //user id
 
                     table.add(columns);
                 }
@@ -408,9 +438,11 @@ public class MainActivity extends AppCompatActivity {
     private class PublishedRoutes extends AsyncTask<String, String, String> {
 
         ArrayList<Object[]> table;
+        int pubId;
 
-        public PublishedRoutes(){
+        public PublishedRoutes(int id){
             table = new ArrayList<>();
+            pubId = id;
         }
 
         @Override
@@ -419,7 +451,7 @@ public class MainActivity extends AppCompatActivity {
 
             try {
                 statement = db_conn.prepareStatement("SELECT * FROM [dbo].[route] WHERE publisher_id = ?");
-                statement.setInt(1, userId);
+                statement.setInt(1, pubId);
                 ResultSet resultSet = statement.executeQuery();
                 while (resultSet.next()) {
                     Object[] columns = new Object[8];
@@ -570,9 +602,9 @@ public class MainActivity extends AppCompatActivity {
     }
 
     //kullanıcı bilgilerini editler
-    private class edit extends AsyncTask<String, String, String> {
+    private class Edit extends AsyncTask<String, String, String> {
         String name ,foto;
-        public edit(String name, String foto) {
+        public Edit(String name, String foto) {
             this.name = name;
             this.foto = foto;
         }
@@ -581,22 +613,19 @@ public class MainActivity extends AppCompatActivity {
 
             PreparedStatement statement;
 
-
             try {
                 if (name != null && foto != null){
                     statement = db_conn.prepareStatement("UPDATE [dbo].[User] SET username = ?, photo_url = ? WHERE id  = ?" );
                     statement.setString(1, this.name);
                     statement.setString(2, this.foto);
                     statement.setInt(3, userId);
-
                 }
-                else if (name ==null && foto != null){
+                else if (foto != null){
                     statement = db_conn.prepareStatement("UPDATE [dbo].[User] SET  photo_url = ? WHERE id  = ?" );
                     statement.setString(1, this.foto);
                     statement.setInt(2, userId);
-
                 }
-                else {
+                else if (name != null) {
                     statement = db_conn.prepareStatement("UPDATE [dbo].[User] SET username = ? WHERE id  = ?");
                     statement.setString(1, this.name);
                     statement.setInt(2, userId);
@@ -606,10 +635,104 @@ public class MainActivity extends AppCompatActivity {
             }
             return null;
         }
-
-
     }
 
+    // listeye rota ekleme
+    private class AddRouteToList extends AsyncTask<String, String, Integer> {
+        int listId,rota_id;
+        public AddRouteToList(int listId,int rota_id ){
+            this.rota_id = rota_id;
+            this.listId = listId;
+        }
+
+        @Override
+        public Integer doInBackground(String... strings) {
+            PreparedStatement statement;
+            try {
+                statement = db_conn.prepareStatement("Select* from [dbo].[ListsRoutes] where list_id = ? AND route_id=?" );
+                statement.setInt(1, listId);
+                statement.setInt(2, rota_id);
+                ResultSet resultSet = statement.executeQuery();
+                int d = resultSet.getInt(1); // eğer bundan daha önce eklendi ise catchin içine düşüyor ve ekleme yapmıyor
+
+                statement = db_conn.prepareStatement("INSERT INTO [dbo].[ListsRoutes] values(?,?)");
+                statement.setInt(1, listId);
+                statement.setInt(2, rota_id);
+                resultSet = statement.executeQuery();
+
+
+            } catch (SQLException throwables) {
+                throwables.printStackTrace();
+                return 0;
+            }
+
+
+            return 1;
+        }
+    }
+
+    private class PublisherInfo extends AsyncTask<String, String, Object[]> {
+        int pubId;
+        Object[] columns;
+
+        public PublisherInfo(int pubId) {
+            this.pubId = pubId;
+            columns = new Object[8];
+        }
+        @Override
+        public Object[] doInBackground(String... strings) {
+
+            PreparedStatement statement;
+
+            try {
+                statement = db_conn.prepareStatement("select  * from [dbo].[user] join [dbo].[publisher] on publisher_id = id where id = ?" );
+                statement.setInt(1, pubId);
+                ResultSet resultSet = statement.executeQuery();
+
+                while (resultSet.next()) {
+
+                    columns[0] = resultSet.getInt(1); // publisher id
+                    columns[1] = resultSet.getString(2); // publisher name
+                    columns[2] = resultSet.getString(3); // user mail
+                    columns[3] = resultSet.getString(6); // foto urls
+                    columns[4] = resultSet.getString(8); // bio
+                    columns[5] = resultSet.getInt(9); // raiting
+                }
+            } catch (SQLException throwables) {
+                throwables.printStackTrace();
+            }
+            return columns;
+        }
+    }
+
+    // fallowa publisher ekleme
+    private class FollowPublisher extends AsyncTask<String, String, Integer> {
+        int user_Id,publisher_Id;
+
+        public FollowPublisher(int user_Id,int publisher_Id ){
+            super();
+            this.publisher_Id = publisher_Id;
+            this.user_Id = user_Id;
+        }
+
+        @Override
+        public Integer doInBackground(String... strings) {
+            PreparedStatement statement;
+            try {
+                statement = db_conn.prepareStatement("INSERT INTO [dbo].[Followlists] values(?,?)");
+                statement.setInt(1, user_Id);
+                statement.setInt(2, publisher_Id);
+                ResultSet resultSet = statement.executeQuery();
+
+            } catch (SQLException throwables) {
+                throwables.printStackTrace();
+                return 0;
+            }
+
+
+            return 1;
+        }
+    }
 
 
 }

@@ -32,14 +32,24 @@ public class ListActivity extends AppCompatActivity {
         ///dinamik olmalı
         Bundle bundle = getIntent().getExtras();
         String mode = "";
+        String id = "";
+
         if(bundle != null){
             mode = bundle.getString("mode");
-            System.out.println("Mode: "+ mode);
+            System.out.println(mode);
         }
-        if (mode=="publisher"){
+        if (mode.equals("profile")){
             headers = getProfileRoutes();
         }
-        else if (mode=="user"){
+        else if (mode.equals("publisher")){
+            System.out.println("pub");
+            id = bundle.getString("pid");
+
+            headers = getPublisherRoutes(Integer.parseInt(id));
+            System.out.println(headers.toString());
+        }
+        else if (mode.equals("user")){
+            listId = Integer.parseInt(bundle.getString("listId"));
             headers = getRoutes();
         }
         else {
@@ -64,7 +74,16 @@ public class ListActivity extends AppCompatActivity {
         result = MainActivity.getInstance().getProfileRoutes();
         ArrayList<String> headers = new ArrayList<>();
         for (Object[] a:result)
-            headers.add("List id: " + a[2].toString());
+            headers.add(a[2].toString());
+        return headers;
+    }
+
+    private ArrayList<String> getPublisherRoutes(int id){
+        /// null ise işlem yapılmalı **************************************************
+        result = MainActivity.getInstance().getPublisherRoutes(id);
+        ArrayList<String> headers = new ArrayList<>();
+        for (Object[] a:result)
+            headers.add(a[2].toString());
         return headers;
     }
 
@@ -73,7 +92,7 @@ public class ListActivity extends AppCompatActivity {
         result = MainActivity.getInstance().getRoutesFromList(listId);
         ArrayList<String> headers = new ArrayList<>();
         for (Object[] a:result)
-            headers.add("List id: " + a[2].toString());
+            headers.add(a[2].toString());
         return headers;
     }
 }

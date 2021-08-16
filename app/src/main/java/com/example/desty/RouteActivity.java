@@ -15,6 +15,7 @@ public class RouteActivity extends AppCompatActivity {
 
     private Button buttonMap, buttonComments;
     private TextView routeName, publisherName, desc, rating;
+    private int pid;
     private Object[] route;
 
     @Override
@@ -25,24 +26,27 @@ public class RouteActivity extends AppCompatActivity {
         // ROUTE INFO
         Intent intent = getIntent();
         route = (Object[]) intent.getSerializableExtra("id");
-        for(Object a: route){
-            System.out.print(a.toString() +  "-");
-        }
-        System.out.println();
+
 
         routeName = (TextView) findViewById(R.id.text_routename);
-        routeName.setText(route[2].toString());
-
         publisherName = (TextView) findViewById(R.id.text_publisher);
-        publisherName.setText(getPublisher(route[1].toString()));/////dene*************************
-
         desc = (TextView) findViewById(R.id.text_route_desc);
-        desc.setText(route[3].toString());
-
         rating = (TextView) findViewById(R.id.text_rating);
-        rating.setText(route[4].toString());
 
-        //ulke sehir de alinacak
+        if(route!=null) {
+            pid = Integer.parseInt(route[1].toString());
+            routeName.setText(route[2].toString());
+            desc.setText(route[3].toString());
+            rating.setText(route[4].toString());
+        }
+        else{
+            //pid bizim id'ye esit olacak ******************************************************
+            pid = MainActivity.getInstance().userId;
+            rating.setText(0+"");
+        }
+        publisherName.setText(getPublisher(pid));
+
+        //ulke sehir de alinacak ***************************************************************
 
         buttonMap = (Button) findViewById(R.id.button_map);
         buttonMap.setOnClickListener(v -> {
@@ -58,13 +62,13 @@ public class RouteActivity extends AppCompatActivity {
     }
 
     public void onClickPublisher(View v){
-        Intent i = new Intent(this, PublisherActivity.class);
-        i.putExtra("publisher_id", (Integer) route[1]);
-        startActivity(i);
+            Intent i = new Intent(this, PublisherActivity.class);
+            System.out.println(pid);
+            i.putExtra("pid", pid + "");
+            startActivity(i);
     }
 
-    private String getPublisher(String id){
-        int i = Integer.parseInt(id);
-        return MainActivity.getInstance().idToName(i);
+    private String getPublisher(int id){
+        return MainActivity.getInstance().idToName(id);
     }
 }
