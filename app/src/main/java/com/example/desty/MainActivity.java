@@ -56,6 +56,7 @@ public class MainActivity extends AppCompatActivity {
             s = new MainActivity.getTen().execute().get();
             s = new MainActivity.useLis().execute().get();
             s = new MainActivity.fallows().execute().get();
+
             rotaPoints(1);
         } catch (ExecutionException e) {
             e.printStackTrace();
@@ -538,7 +539,7 @@ public class MainActivity extends AppCompatActivity {
         }
     }
 
-
+    // listeye rota ekleme
     private class AddRouteToList extends AsyncTask<String, String, Integer> {
         int listId,rota_id;
         public AddRouteToList(int listId,int rota_id ){
@@ -571,5 +572,41 @@ public class MainActivity extends AppCompatActivity {
             return 1;
         }
     }
+
+
+    private class PublisherInfo extends AsyncTask<String, String, Object[]> {
+        int pubId;
+        public PublisherInfo(int pubId) {
+            this.pubId = pubId;
+        }
+        @Override
+        public Object[] doInBackground(String... strings) {
+
+            PreparedStatement statement;
+            Object[] columns = new Object[8];
+
+            try {
+                statement = db_conn.prepareStatement("select  * from [dbo].[user] join [dbo].[publisher] on publisher_id = id where id = ?" );
+                statement.setInt(1, pubId);
+                ResultSet resultSet = statement.executeQuery();
+
+                while (resultSet.next()) {
+
+                    columns[0] = resultSet.getInt(1); // publisher id
+                    columns[1] = resultSet.getString(2); // publisher name
+                    columns[2] = resultSet.getString(3); // user mail
+                    columns[3] = resultSet.getString(6); // foto urls
+                    columns[4] = resultSet.getString(8); // bio
+                    columns[5] = resultSet.getInt(9); // raiting
+
+                }
+            } catch (SQLException throwables) {
+                throwables.printStackTrace();
+            }
+
+            return columns;
+        }
+    }
+
 
 }
