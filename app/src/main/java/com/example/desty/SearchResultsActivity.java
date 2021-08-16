@@ -15,8 +15,9 @@ import java.util.ArrayList;
 
 public class SearchResultsActivity extends AppCompatActivity {
 
-    ListView listResults;
+    private ListView listResults;
     private Context context;
+    private ArrayList<Object[]> results;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -24,35 +25,29 @@ public class SearchResultsActivity extends AppCompatActivity {
         context = this;
         setContentView(R.layout.activity_search_results);
 
-        //get result arraylist
-        Intent intent = getIntent();
-        ArrayList<Object []> results = (ArrayList<Object []>) intent.getSerializableExtra("result");
-        ArrayList<String> headers = new ArrayList<>();
-
-        for(Object[] a:results){
-            for(int j=0;j<8;j++){
-                System.out.print((a[j].toString()) + "-");
-
-            }
-            headers.add(a[2].toString());
-            System.out.println();
-        }
-
-        listResults = (ListView) findViewById(R.id.list_results);
-
+        // LIST
+        ArrayList<String> headers = sendQuery();
         ArrayAdapter adapter = new ArrayAdapter(this, android.R.layout.simple_list_item_1,headers);
 
+        listResults = (ListView) findViewById(R.id.list_results);
         listResults.setAdapter(adapter);
-
         listResults.setOnItemClickListener(new AdapterView.OnItemClickListener() {
             @Override
             public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
                 Toast.makeText(SearchResultsActivity.this,"clicked item "+position+ " "+ headers.get(position).toString(), Toast.LENGTH_SHORT).show();
                 Intent i = new Intent(context, RouteActivity.class);
-                i.putExtra("id", headers.get(position));
+                i.putExtra("id", results.get(position));
                 startActivity(i);
             }
         });
     }
 
+    private ArrayList<String> sendQuery(){
+        Intent intent = getIntent();
+        results = (ArrayList<Object []>) intent.getSerializableExtra("result");
+        ArrayList<String> headers = new ArrayList<>();
+        for(Object[] a:results)
+            headers.add(a[2].toString());
+        return headers;
+    }
 }

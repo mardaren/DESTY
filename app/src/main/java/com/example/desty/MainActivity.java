@@ -129,7 +129,7 @@ public class MainActivity extends AppCompatActivity {
     }
 
     public ArrayList<Object[]> getProfileRoutes(){
-        PublishedLists pl = new PublishedLists();
+        PublishedRoutes pl = new PublishedRoutes();
         try {
             pl.execute().get();
         } catch (Exception e) {
@@ -371,11 +371,11 @@ public class MainActivity extends AppCompatActivity {
     }
 
     // eğer kullanıc publisher değil ise null doldurucak publisher ise publisher id ve list id döncek
-    private class PublishedLists extends AsyncTask<String, String, String> {
+    private class PublishedRoutes extends AsyncTask<String, String, String> {
 
         ArrayList<Object[]> table;
 
-        public PublishedLists(){
+        public PublishedRoutes(){
             table = new ArrayList<>();
         }
 
@@ -384,13 +384,19 @@ public class MainActivity extends AppCompatActivity {
             PreparedStatement statement;
 
             try {
-                statement = db_conn.prepareStatement("SELECT * FROM [dbo].[List] WHERE publisher_id = ?");
+                statement = db_conn.prepareStatement("SELECT * FROM [dbo].[route] WHERE publisher_id = ?");
                 statement.setInt(1, userId);
                 ResultSet resultSet = statement.executeQuery();
                 while (resultSet.next()) {
-                    Object[] columns = new Object[3];
-                    columns[0] = resultSet.getInt(1); // list id
+                    Object[] columns = new Object[8];
+                    columns[0] = resultSet.getInt(1); // rota id
                     columns[1] = resultSet.getInt(2); //publisher id
+                    columns[2] = resultSet.getString(3); // rota ismi
+                    columns[3] = resultSet.getString(4); // tanımı
+                    columns[4] = resultSet.getInt(5); // ratingi
+                    columns[5] = resultSet.getInt(6); // izlenmesi
+                    columns[6] = resultSet.getString(7); // ülke
+                    columns[7] = resultSet.getString(8); // şehir
                     table.add(columns);
                 }
 

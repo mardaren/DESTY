@@ -21,8 +21,9 @@ import java.util.ArrayList;
 
 public class HomepageFragment extends Fragment {
 
-    Button mapButton;
-    ListView listHomepage;
+    private Button mapButton;
+    private ListView listHomepage;
+    private ArrayList<Object[]> result;
 
     @Nullable
     @org.jetbrains.annotations.Nullable
@@ -34,38 +35,35 @@ public class HomepageFragment extends Fragment {
     @Override
     public void onViewCreated(@NonNull @NotNull View view, @Nullable @org.jetbrains.annotations.Nullable Bundle savedInstanceState) {
         super.onViewCreated(view, savedInstanceState);
+        // MAP BUTTON / ROUTE ACTIVITY
         mapButton = view.findViewById(R.id.button_add);
         mapButton.setOnClickListener(v -> {
-            //Intent i = new Intent(getActivity(), LocationActivity.class);
             Intent i = new Intent(getActivity(), RouteActivity.class);
             startActivity(i);
         });
 
-        listHomepage = (ListView) view.findViewById(R.id.list_homepage);
-
+        // LIST
         ArrayList<String> headers = sendQuery();
         ArrayAdapter adapter = new ArrayAdapter(getContext(), android.R.layout.simple_list_item_1,headers);
 
+        listHomepage = (ListView) view.findViewById(R.id.list_homepage);
         listHomepage.setAdapter(adapter);
-
         listHomepage.setOnItemClickListener(new AdapterView.OnItemClickListener() {
             @Override
             public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
                 Toast.makeText(getContext(),"clicked item "+position+ " "+ headers.get(position), Toast.LENGTH_SHORT).show();
                 Intent i = new Intent(getActivity(), RouteActivity.class);
-                i.putExtra("id", headers.get(position));
+                i.putExtra("id", result.get(position));
                 startActivity(i);
             }
         });
     }
 
     private ArrayList<String> sendQuery(){
-        ArrayList<Object[]> result = ((MainActivity) requireActivity()).getHomepageList();
+        result = ((MainActivity) requireActivity()).getHomepageList();
         ArrayList<String> headers = new ArrayList<>();
-        for (Object[] a: result){
+        for (Object[] a: result)
             headers.add(a[2].toString());
-        }
-
         return headers;
     }
 

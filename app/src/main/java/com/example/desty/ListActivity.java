@@ -17,8 +17,8 @@ import java.util.ArrayList;
 
 public class ListActivity extends AppCompatActivity {
 
-    ListView listRoutes;
-    ArrayList<String> headers;
+    private ListView listRoutes;
+    private ArrayList<Object[]> result;
     private Context context;
 
     @Override
@@ -27,7 +27,7 @@ public class ListActivity extends AppCompatActivity {
         setContentView(R.layout.activity_list);
         context = this;
 
-        listRoutes = (ListView) findViewById(R.id.list_routes);
+        ArrayList<String> headers;
         ///dinamik olmalı
         Bundle bundle = getIntent().getExtras();
         String mode = "";
@@ -43,14 +43,14 @@ public class ListActivity extends AppCompatActivity {
         }
         ArrayAdapter adapter = new ArrayAdapter(this, android.R.layout.simple_list_item_1,headers);
 
+        listRoutes = (ListView) findViewById(R.id.list_routes);
         listRoutes.setAdapter(adapter);
-
         listRoutes.setOnItemClickListener(new AdapterView.OnItemClickListener() {
             @Override
             public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
                 Toast.makeText(ListActivity.this,"clicked item "+position+ " "+ headers.get(position), Toast.LENGTH_SHORT).show();
                 Intent i = new Intent(context, RouteActivity.class);
-                i.putExtra("id", headers.get(position));//burası degisebilir, dikkat et*************************
+                i.putExtra("id", result.get(position));
                 startActivity(i);
             }
         });
@@ -58,12 +58,10 @@ public class ListActivity extends AppCompatActivity {
 
     private ArrayList<String> getProfileRoutes(){
         /// null ise işlem yapılmalı **************************************************
-        ArrayList<Object[]> result = MainActivity.getInstance().getProfileRoutes();
+        result = MainActivity.getInstance().getProfileRoutes();
         ArrayList<String> headers = new ArrayList<>();
-        for (Object[] a:result){
-            headers.add("List id: " + a[0].toString());//***********************************************************
-            /// burası degisecek
-        }
+        for (Object[] a:result)
+            headers.add("List id: " + a[2].toString());
         return headers;
     }
 }

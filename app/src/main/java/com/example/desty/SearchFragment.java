@@ -34,14 +34,18 @@ public class SearchFragment extends Fragment{
     private HashMap<String,String[]> citiesCountries = new HashMap<>();
     private Button buttonSearch;
     private EditText editText_keyword;
-
+    private ArrayList<Object[]> result;
 
     @Nullable
     @org.jetbrains.annotations.Nullable
     @Override
     public View onCreateView(@NonNull @NotNull LayoutInflater inflater, @Nullable @org.jetbrains.annotations.Nullable ViewGroup container, @Nullable @org.jetbrains.annotations.Nullable Bundle savedInstanceState) {
-        View view = inflater.inflate(R.layout.fragment_search, container, false);
+        return inflater.inflate(R.layout.fragment_search, container, false);
+    }
 
+    @Override
+    public void onViewCreated(@NonNull @NotNull View view, @Nullable @org.jetbrains.annotations.Nullable Bundle savedInstanceState) {
+        super.onViewCreated(view, savedInstanceState);
         // keyword
         editText_keyword = view.findViewById(R.id.editKeyword);
 
@@ -55,6 +59,7 @@ public class SearchFragment extends Fragment{
         PSpinner spinnerCountry = new PSpinner(spinnerCity, view, countries, R.id.spinner_country,
                 R.layout.support_simple_spinner_dropdown_item, android.R.layout.simple_spinner_dropdown_item);
 
+        // SEARCH BUTTON
         buttonSearch = view.findViewById(R.id.button_search);
         buttonSearch.setOnClickListener(v -> {
             //query phase
@@ -65,8 +70,6 @@ public class SearchFragment extends Fragment{
             i.putExtra("result", result);
             startActivity(i);
         });
-
-        return view;
     }
 
     private void fillMap(){
@@ -82,21 +85,11 @@ public class SearchFragment extends Fragment{
     private ArrayList<Object[]> sendQuery(){
         String key,countryName,cityName;
         key = "" + editText_keyword.getText();
-        //System.out.println(w0+" "+ Country+" "+ City);
         key = (key.equals(""))?null:key;
         countryName = (Country.equals(""))?null:Country;
         cityName = (City.equals("") || City.equals("City") || City.equals("City - Select Country"))?null:City;
-        System.out.println("Query created: "+countryName+" "+ cityName+" "+key);
 
-        ArrayList<Object[]> result = ((MainActivity) requireActivity()).search(countryName,cityName,key);
-
-        /*for(Object[] a:result){
-            for(int j=0;j<8;j++){
-                System.out.print((a[j].toString()) + "-");
-            }
-            System.out.println();
-        }*/
-
+        result = ((MainActivity) requireActivity()).search(countryName,cityName,key);
         return result;
     }
 
