@@ -45,6 +45,7 @@ public class MainActivity extends AppCompatActivity {
     Stack userList = new Stack();
     Stack published = new Stack();
     Stack point = new Stack();
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -61,7 +62,6 @@ public class MainActivity extends AppCompatActivity {
         } catch (InterruptedException e) {
             e.printStackTrace();
         }
-
 
 
         binding = ActivityMainBinding.inflate(getLayoutInflater());
@@ -311,7 +311,6 @@ public class MainActivity extends AppCompatActivity {
     // eğer kullanıc publisher değil ise null doldurucak publisher ise publisher id ve list id döncek
     private class publishedLists extends AsyncTask<String, String, String> {
 
-
         @Override
         public String doInBackground(String... strings) {
 
@@ -466,10 +465,111 @@ public class MainActivity extends AppCompatActivity {
             }
             return null;
         }
-
-
     }
     public void editUser(String newname,String newfoto){
         new MainActivity.edit(newname,newfoto).execute();
     }
+
+    //rota bilgilerin döner rota idsi ile
+    private class RotaInfo extends AsyncTask<String, String, Object[]> {
+        int rotaId;
+        public RotaInfo(int rotaId) {
+            this.rotaId = rotaId;
+        }
+        @Override
+        public Object[] doInBackground(String... strings) {
+
+            PreparedStatement statement;
+            Object[] columns = new Object[8];
+
+            try {
+                statement = db_conn.prepareStatement("select  * from [dbo].[Route] where route_id = ?" );
+                statement.setInt(1, rotaId);
+                ResultSet resultSet = statement.executeQuery();
+
+                while (resultSet.next()) {
+
+                    columns[0] = resultSet.getInt(1); // rota id
+                    columns[1] = resultSet.getInt(2); // publisher id
+                    columns[2] = resultSet.getString(3); // rota name
+                    columns[3] = resultSet.getString(4); // tanım
+                    columns[4] = resultSet.getInt(5); // rating
+                    columns[5] = resultSet.getInt(6); // wievs
+                    columns[6] = resultSet.getString(7); // ülke
+                    columns[7] = resultSet.getString(8); // şehir
+
+
+                }
+            } catch (SQLException throwables) {
+                throwables.printStackTrace();
+            }
+
+            return columns;
+        }
+    }
+    //listin içinde bulunan rotaların idsini döner
+    private class ListsRoutes extends AsyncTask<String, String, Stack> {
+        int listId;
+        public ListsRoutes(int listId) {
+            this.listId = listId;
+        }
+        @Override
+        public Stack doInBackground(String... strings) {
+
+            PreparedStatement statement;
+
+            Stack rotalist = new Stack();
+            try {
+                statement = db_conn.prepareStatement("select  route_id from [dbo].[ListsRoutes] where list_id = ?" );
+                statement.setInt(1, listId);
+                ResultSet resultSet = statement.executeQuery();
+
+                while (resultSet.next()) {
+                    Object[] columns = new Object[1];
+                    columns[0] = resultSet.getInt(1); // rota id
+                    rotalist.add(columns[0]);
+
+                }
+            } catch (SQLException throwables) {
+                throwables.printStackTrace();
+            }
+
+            return rotalist;
+        }
+    }
+
+
+    private class AddRouteToList extends AsyncTask<String, String, Integer> {
+        int listId,rota_id;
+        public AddRouteToList(int listId,int rota_id ){
+            this.rota_id = rota_id;
+            this.listId = listId;
+        }
+
+        @Override
+        public Integer doInBackground(String... strings) {
+            PreparedStatement statement;
+            try {
+                statement = db_conn.prepareStatement("Select* from [dbo].[ListsRoutes] where list_id = ? AND route_id=?" );
+                statement.setInt(1, listId);
+                statement.setInt(2, rota_id);
+                ResultSet resultSet = statement.executeQuery();
+                int d = resultSet.getInt(1); // eğer bundan daha önce eklendi ise catchin içine düşüyor ve ekleme yapmıyor
+
+                    statement = db_conn.prepareStatement("INSERT INTO [dbo].[ListsRoutes] values(?,?)");
+                    statement.setInt(1, listId);
+                    statement.setInt(2, rota_id);
+                    resultSet = statement.executeQuery();
+
+
+            } catch (SQLException throwables) {
+                throwables.printStackTrace();
+                return 0;
+            }
+
+
+            return 1;
+        }
+    }
+
 }
