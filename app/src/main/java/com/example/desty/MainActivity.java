@@ -748,4 +748,45 @@ public class MainActivity extends AppCompatActivity {
             return null;
         }
     }
+
+    // rota tanımlarını döner
+    private class RouteCommentAdder extends AsyncTask<String, String, String> {
+        int route_id,sayi,star;
+        String content ="";
+        Object[] columns = new Object[5];
+        public RouteCommentAdder(int route_id ,String content,int  star){
+            this.route_id = route_id;
+            this.content = content;
+            this.star = star;
+        }
+
+        @Override
+        public String doInBackground(String... strings) {
+            PreparedStatement statement;
+
+            try {
+
+                statement = db_conn.prepareStatement("Select max(comment_id) from [dbo].[Comment]");
+                statement.setInt(1, route_id);
+                ResultSet resultSet = statement.executeQuery();
+                while (resultSet.next()) {
+                    sayi= resultSet.getInt(1); // izlenme sayisi
+                }
+                statement = db_conn.prepareStatement("INSERT INTO [dbo].[Comment] values(?,?,?,?,?)");
+                statement.setInt(1, sayi+1);
+                statement.setInt(2, userId);
+                statement.setInt(3, route_id);
+                statement.setInt(4, star);
+                statement.setString(5, content);
+                resultSet = statement.executeQuery();
+
+            } catch (SQLException throwables) {
+                throwables.printStackTrace();
+                return null;
+            }
+
+
+            return null;
+        }
+    }
 }
