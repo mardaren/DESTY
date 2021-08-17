@@ -4,9 +4,16 @@ import androidx.appcompat.app.AppCompatActivity;
 
 import android.content.Intent;
 import android.os.Bundle;
+import android.view.Gravity;
+import android.view.LayoutInflater;
 import android.view.View;
+import android.widget.ArrayAdapter;
 import android.widget.Button;
+import android.widget.ListView;
+import android.widget.PopupWindow;
 import android.widget.TextView;
+
+import java.util.ArrayList;
 
 public class RouteActivity extends AppCompatActivity {
 
@@ -56,8 +63,30 @@ public class RouteActivity extends AppCompatActivity {
             startActivity(i);
         });
 
-        buttonAdd = findViewById(R.id.button_addto_list);
+        buttonAdd = findViewById(R.id.button_add_to_list);
+
         buttonAdd.setOnClickListener(v -> {
+            LayoutInflater inflater = (LayoutInflater)getSystemService(LAYOUT_INFLATER_SERVICE);
+            View layout = inflater.inflate(R.layout.popup_routetolist,null);
+            ListView list = layout.findViewById(R.id.popup_list);
+            final PopupWindow popupWindow = new PopupWindow(RouteActivity.this);
+            popupWindow.setContentView(layout);
+            popupWindow.setFocusable(true);
+            popupWindow.showAtLocation(layout , Gravity.CENTER, 0, 0);
+            //int user_id = MainActivity.getInstance().userId;
+            ArrayList<Object[]> userList = MainActivity.getInstance().getUserLists();
+            ArrayList<String> headers = new ArrayList<>();
+            for(Object[] a: userList){
+                headers.add(a[2].toString());
+            }
+
+            ArrayAdapter adapter = new ArrayAdapter(this, android.R.layout.simple_list_item_1,headers);
+            list.setAdapter(adapter);
+
+            list.setOnItemClickListener((parent, view, position, id1) -> {
+                MainActivity.getInstance().addToList(Integer.parseInt(userList.get(position)[0].toString()),route_id);
+                popupWindow.dismiss();
+            });
         });
 
     }

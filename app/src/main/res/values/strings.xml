@@ -45,6 +45,7 @@
     <string name="comments">Comments</string>
     <string name="show_in_map">Show In Map</string>
     <string name="show_route_info">Show Route Info</string>
+    <string name="add_route_to_list">Add to List</string>
 
     <!--    Profile-->
     <string name="apply">Apply</string>

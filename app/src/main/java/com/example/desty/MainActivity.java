@@ -173,6 +173,16 @@ public class MainActivity extends AppCompatActivity {
         return idt.username;
     }
 
+    public void addToList(int listId,int routeId){
+        AddRouteToList obj = new AddRouteToList(listId,routeId);
+        try {
+            obj.execute().get();
+        } catch (ExecutionException e) {
+            e.printStackTrace();
+        } catch (InterruptedException e) {
+            e.printStackTrace();
+        }
+    }
     //not implemented *********************************************************************
     public void rotaPoints(int routeId){}
 
@@ -667,7 +677,10 @@ public class MainActivity extends AppCompatActivity {
                 statement.setInt(1, listId);
                 statement.setInt(2, rota_id);
                 ResultSet resultSet = statement.executeQuery();
-                int d = resultSet.getInt(1); // eğer bundan daha önce eklendi ise catchin içine düşüyor ve ekleme yapmıyor
+                while (resultSet.next()){
+                    int d = resultSet.getInt(1);
+                }
+
 
                 statement = db_conn.prepareStatement("INSERT INTO [dbo].[ListsRoutes] values(?,?)");
                 statement.setInt(1, listId);
