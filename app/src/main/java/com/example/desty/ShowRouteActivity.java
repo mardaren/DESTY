@@ -33,6 +33,8 @@ import com.google.android.gms.maps.SupportMapFragment;
 import com.google.android.gms.maps.model.LatLng;
 import com.google.android.gms.maps.model.Marker;
 import com.google.android.gms.maps.model.MarkerOptions;
+import com.google.android.gms.maps.model.Polyline;
+import com.google.android.gms.maps.model.PolylineOptions;
 import com.google.android.gms.tasks.OnCompleteListener;
 import com.google.android.gms.tasks.Task;
 
@@ -43,6 +45,7 @@ import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.sql.Statement;
 import java.util.ArrayList;
+import java.util.concurrent.ExecutionException;
 
 public class ShowRouteActivity extends AppCompatActivity
         implements
@@ -69,10 +72,10 @@ public class ShowRouteActivity extends AppCompatActivity
     // The geographical location where the device is currently located. That is, the last-known
     // location retrieved by the Fused Location Provider.
     private Location lastKnownLocation;
-    // A default location (Sydney, Australia) and default zoom to use when location permission is
+    // A default location (Ankara, Turkey) and default zoom to use when location permission is
     // not granted.
-    private final LatLng defaultLocation = new LatLng(-33.8523341, 151.2106085);
-    private static final int DEFAULT_ZOOM = 15;
+    private final LatLng defaultLocation = new LatLng(39.925533, 32.866287);
+    private static final int DEFAULT_ZOOM = 10;
     private static final String TAG = ShowRouteActivity.class.getSimpleName();
     private static final String KEY_CAMERA_POSITION = "camera_position";
     private static final String KEY_LOCATION = "location";
@@ -80,7 +83,7 @@ public class ShowRouteActivity extends AppCompatActivity
 
     private Button info_button;
     private Connection db_conn=null;
-    private int route_id = 1;
+    private int route_id = -1;
     private String route_name,route_desc,route_rating,route_views,route_country,route_city;
     ArrayList<Object[]> points = new ArrayList<>();
 
@@ -89,17 +92,14 @@ public class ShowRouteActivity extends AppCompatActivity
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_show_route);
         info_button = findViewById(R.id.show_route_info);
-//        Intent i = getIntent();
-//        route_id = i.getIntExtra("route_id",0);
-//        System.out.println("Route Id  " + route_id);
+        Intent i = getIntent();
+        route_id = i.getIntExtra("Route_ID",0);
         // Obtain the SupportMapFragment and get notified when the map is ready to be used.
         SupportMapFragment mapFragment = (SupportMapFragment) getSupportFragmentManager()
                 .findFragmentById(R.id.map);
         mapFragment.getMapAsync(this);
         fusedLocationClient = LocationServices.getFusedLocationProviderClient(this);
         new Connect().execute();
-        new FetchRoutePoints().execute();
-
         info_button.setOnClickListener(v -> {
             LayoutInflater inflater = (LayoutInflater)getSystemService(LAYOUT_INFLATER_SERVICE);
             View layout = inflater.inflate(R.layout.popup_route_info,null);
@@ -164,6 +164,7 @@ public class ShowRouteActivity extends AppCompatActivity
             }
         });
         getLocationPermission();
+        putMarkers();
     }
 
     /**
@@ -249,8 +250,6 @@ public class ShowRouteActivity extends AppCompatActivity
                 map.setMyLocationEnabled(true);
                 map.getUiSettings().setMyLocationButtonEnabled(true);
                 map.setOnMyLocationButtonClickListener(this);
-                requestLocation();
-                putMarkers();
             } else {
                 map.setMyLocationEnabled(false);
                 map.getUiSettings().setMyLocationButtonEnabled(false);
@@ -297,12 +296,15 @@ public class ShowRouteActivity extends AppCompatActivity
         return locationPermissionGranted && lastKnownLocation != null;
     }
 
-    @Override
-    public boolean onMyLocationButtonClick() {
-        return getDeviceLocation();
-    }
-
-    public void putMarkers(){
+    private void putMarkers(){
+        try {
+            new FetchRoutePoints().execute().get();
+        } catch (ExecutionException e) {
+            e.printStackTrace();
+        } catch (InterruptedException e) {
+            e.printStackTrace();
+        }
+        PolylineOptions polylineOptions = new PolylineOptions();
         Log.i(TAG,"Putting markers to the map");
         LatLng pointLatLng=defaultLocation; // in case no location fetched.
         double lat,lng;
@@ -314,8 +316,17 @@ public class ShowRouteActivity extends AppCompatActivity
                     .position(pointLatLng)
                     .title(p[2].toString()) // name of point
                     .snippet(p[3].toString())); // description of point
+            polylineOptions.add(pointLatLng);
         }
         this.map.animateCamera(CameraUpdateFactory.newLatLngZoom(pointLatLng,DEFAULT_ZOOM));
+        Polyline polyline = map.addPolyline(polylineOptions);
+        polyline.setColor(R.color.purple_200);
+        //Other shape attributes can be set
+
+    }
+    @Override
+    public boolean onMyLocationButtonClick() {
+        return getDeviceLocation();
     }
 
     private class Connect extends AsyncTask<String, String, String> {
@@ -351,7 +362,6 @@ public class ShowRouteActivity extends AppCompatActivity
             String route_query = "SELECT * FROM [dbo].[Route] where route_id = ?";
             String point_query = "SELECT * FROM [dbo].[Point] where route_id = ?";
             Object[] columns = new Object[8]; // Route table columns
-            Object[] point_columns = new Object[6];
             try {
                 // Fetch route from DB
                 route_statement = db_conn.prepareStatement(route_query);
@@ -379,6 +389,7 @@ public class ShowRouteActivity extends AppCompatActivity
                 point_statement.setObject(1,route_id);
                 ResultSet resultSet1 = point_statement.executeQuery();
                 while (resultSet1.next()) {
+                    Object[] point_columns = new Object[6];
                     point_columns[0] = resultSet1.getInt(1);   // point_id
                     point_columns[1] = resultSet1.getInt(2);   // route_id
                     point_columns[2] = resultSet1.getString(3);    // point_name
@@ -393,8 +404,6 @@ public class ShowRouteActivity extends AppCompatActivity
             }
             return null;
         }
-
-
     }
 
 }

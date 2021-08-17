@@ -30,21 +30,22 @@ public class RouteActivity extends AppCompatActivity {
         location = findViewById(R.id.text_location);
 
 
-        route_id = Integer.parseInt(route[0].toString());  // YANLIS ID
+        route_id = Integer.parseInt(route[0].toString());
         pid = Integer.parseInt(route[1].toString());
         routeName.setText(route[2].toString());
         desc.setText(route[3].toString());
         rating.setText(route[4].toString());
-        // hatalı
-        publisherName.setText(route[1].toString());
-        //hatali nullsa
-        location.setText(route[6].toString().replace(" ","") + "/" + route[7].toString().replace(" ",""));
-        //}
+
+        String name = MainActivity.getInstance().idToName(pid);
+        publisherName.setText(name);
+        String location_str = route[6] + "/" + route[7];
+        location.setText(location_str);
+
         buttonMap = findViewById(R.id.button_map);
         buttonMap.setOnClickListener(v -> {
             Intent i = new Intent(this, ShowRouteActivity.class);
             System.out.println(route_id);
-            i.putExtra("Route_ID",route_id); // YANLISSSS
+            i.putExtra("Route_ID",route_id);
             startActivity(i);
         });
 

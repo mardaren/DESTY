@@ -66,6 +66,7 @@ import java.sql.Statement;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Locale;
+import java.util.concurrent.ExecutionException;
 
 /**
  * This demo shows how GMS Location can be used to check for changes to the users location.  The
@@ -99,10 +100,10 @@ public class AddRouteActivity extends AppCompatActivity
     // The geographical location where the device is currently located. That is, the last-known
     // location retrieved by the Fused Location Provider.
     private Location lastKnownLocation;
-    // A default location (Sydney, Australia) and default zoom to use when location permission is
+    // A default location (Ankara, Turkey) and default zoom to use when location permission is
     // not granted.
-    private final LatLng defaultLocation = new LatLng(-33.8523341, 151.2106085);
-    private static final int DEFAULT_ZOOM = 15;
+    private final LatLng defaultLocation = new LatLng(39.925533, 32.866287);
+    private static final int DEFAULT_ZOOM = 10;
     private double longitude;
     private double latitude;
     private static final String TAG = AddRouteActivity.class.getSimpleName();
@@ -119,6 +120,7 @@ public class AddRouteActivity extends AppCompatActivity
 */
     private Button menu_button,finish_route;
     private boolean isSave = false;
+    private int point_count = 0;
     private ArrayList<Double[]> point_coors = new ArrayList<>();
     private ArrayList<String[]> point_name_info = new ArrayList<>();
 
@@ -134,7 +136,6 @@ public class AddRouteActivity extends AppCompatActivity
         finish_route = findViewById(R.id.finish_route);
         Intent i = getIntent();
         publisher_id = i.getIntExtra("User_ID",0);
-        System.out.println(publisher_id);
         menu_button.setOnClickListener(v -> {
             // Initializing the popup menu and giving the reference as current context
             PopupMenu popupMenu = new PopupMenu(AddRouteActivity.this, menu_button);
@@ -142,13 +143,6 @@ public class AddRouteActivity extends AppCompatActivity
             // Inflating popup menu from map_menu.xml file
             popupMenu.getMenuInflater().inflate(R.menu.map_menu, popupMenu.getMenu());
             popupMenu.setOnMenuItemClickListener(menuItem -> {
-                /*
-                Get places
-                if (menuItem.getItemId() == R.id.option_get_place) {
-                    Log.i(TAG,"Showing nearby places");
-                    //showCurrentPlace();
-                }
-*/
                 if (menuItem.getItemId() == R.id.save_route){
                     isSave = true;
                     menu_button.setVisibility(View.INVISIBLE);
@@ -178,7 +172,16 @@ public class AddRouteActivity extends AppCompatActivity
             done.setOnClickListener(v1 -> {
                 this.route_name = route_name_view.getText().toString();
                 this.route_desc = route_desc_view.getText().toString();
-                new PointUpload().execute();
+                try {
+                    new PointUpload().execute().get();
+                    this.point_count = 0;
+                    this.point_coors.clear();
+                    this.point_name_info.clear();
+                } catch (ExecutionException e) {
+                    e.printStackTrace();
+                } catch (InterruptedException e) {
+                    e.printStackTrace();
+                }
                 popupWindow.dismiss();
             });
 
@@ -191,11 +194,6 @@ public class AddRouteActivity extends AppCompatActivity
                 (SupportMapFragment) getSupportFragmentManager().findFragmentById(R.id.map);
         mapFragment.getMapAsync(this);
         fusedLocationClient = LocationServices.getFusedLocationProviderClient(this);
-        /*
-            Construct a PlacesClient
-            Places.initialize(getApplicationContext(), BuildConfig.MAPS_API_KEY);
-            placesClient = Places.createClient(this);
-        */
         geocoder = new Geocoder(getApplicationContext(), Locale.getDefault());
         new Connect().execute();
 
@@ -392,6 +390,7 @@ public class AddRouteActivity extends AppCompatActivity
                 longitude = latLng.longitude;
                 point_coors.add(new Double[]{latitude,longitude});
                 point_name_info.add(new String[]{point_name.getText().toString(),point_desc.getText().toString()});
+                point_count++;
                 try {
                     List<Address> addresses = geocoder.getFromLocation(latitude,longitude,1);
                     if (addresses.size() > 0)
@@ -438,18 +437,34 @@ public class AddRouteActivity extends AppCompatActivity
     private class PointUpload extends AsyncTask<String, String, String> {
         @Override
         protected String doInBackground(String... urls) {
-            Statement statement;
-            String query = "SELECT max(route_id) FROM [dbo].[Route]";
-            int status = -1;
+            Statement statement,statement1;
+            int publisher_status=-1,route_status=-1,point_status=-1;
             try {
+
+                //Make User -> Publisher
+                PreparedStatement check_publisher = db_conn.prepareStatement("SELECT publisher_id FROM [dbo].[Publisher] where publisher_id = ?");
+                check_publisher.setObject(1,publisher_id);
+                ResultSet check = check_publisher.executeQuery(); // in case publisher already exists
+                if (!check.next()){
+                    //ResultSet is empty
+                    PreparedStatement publisher_st = db_conn.prepareStatement("INSERT INTO [dbo].[Publisher] values(?,?,?)");
+                    publisher_st.setObject(1,publisher_id);
+                    publisher_st.setObject(2,"");
+                    publisher_st.setObject(3,0.0);
+                    publisher_status = publisher_st.executeUpdate();
+                }
+
+
+                //Route Insertion
                 statement = db_conn.createStatement();
-                ResultSet resultSet = statement.executeQuery(query);
+                String route_query = "SELECT max(route_id) FROM [dbo].[Route]";
+                ResultSet resultSet = statement.executeQuery(route_query);
                 int route_id = 0;
                 while(resultSet.next()){
                     route_id = resultSet.getInt(1);
                 }
                 route_id++;
-                System.out.println("route_id"+ route_id);
+
                 PreparedStatement insertSt=db_conn.prepareStatement("INSERT INTO [dbo].[Route] values(?,?,?,?,?,?,?,?)");
                 insertSt.setObject(1,route_id);
                 insertSt.setObject(2,publisher_id);
@@ -459,14 +474,33 @@ public class AddRouteActivity extends AppCompatActivity
                 insertSt.setObject(6,0);    // initial views
                 insertSt.setObject(7,route_country);
                 insertSt.setObject(8,route_city);
-                System.out.println(route_id);
-                System.out.println(publisher_id);
-                System.out.println(route_name);
-                System.out.println(route_desc);
-                System.out.println(route_country);
-                System.out.println(route_city);
-                //status = insertSt.executeUpdate();
+                route_status = insertSt.executeUpdate();
 
+                //Point Insertions
+                statement1 = db_conn.createStatement();
+                String point_query = "SELECT max(point_id) FROM [dbo].[Point]";
+                ResultSet resultSet1 = statement1.executeQuery(point_query);
+                int point_id = 0;
+                while(resultSet1.next()){
+                    point_id = resultSet1.getInt(1);
+                }
+                point_id++;
+
+                PreparedStatement pointInsert=db_conn.prepareStatement("INSERT INTO [dbo].[Point] values(?,?,?,?,?,?)");
+                for (int i=0;i<point_count;i++){
+                    pointInsert.setObject(1,point_id);
+                    pointInsert.setObject(2,route_id);
+                    pointInsert.setObject(3,point_name_info.get(i)[0]); // point name
+                    pointInsert.setObject(4,point_name_info.get(i)[1]); // point desc
+                    pointInsert.setObject(5,point_coors.get(i)[0]); // point latitude
+                    pointInsert.setObject(6,point_coors.get(i)[1]); // point longitude
+                    point_status = pointInsert.executeUpdate();
+                    point_id++;
+                }
+                if(publisher_status>0 && point_status>0 && route_status>0)
+                    Log.i(TAG,"Route added successfully");
+                else
+                    Log.e(TAG,"Route cannot be added.");
 
             } catch (SQLException throwables) {
                 throwables.printStackTrace();
