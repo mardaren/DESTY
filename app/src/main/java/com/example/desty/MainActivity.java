@@ -557,6 +557,8 @@ public class MainActivity extends AppCompatActivity {
         public Integer doInBackground(String... strings) {
             PreparedStatement statement;
             try {
+                    // eğer bu varsa 1 dönüyor
+                    //SELECT CASE WHEN EXISTS (SELECT * FROM [dbo].[ListsRoutes] WHERE listid = ? AND route_id = ?) THEN CAST(1 AS BIT) ELSE CAST(0 AS BIT) END
                     statement = db_conn.prepareStatement("INSERT INTO [dbo].[ListsRoutes] values(?,?)");
                     statement.setInt(1, listId);
                     statement.setInt(2, rota_id);
@@ -620,6 +622,9 @@ public class MainActivity extends AppCompatActivity {
         public Integer doInBackground(String... strings) {
             PreparedStatement statement;
             try {
+                // eğer bu varsa 1 dönüyor
+                //SELECT CASE WHEN EXISTS (SELECT * FROM [dbo].[Followlists] WHERE user_id = ? AND publisher_id = ?) THEN CAST(1 AS BIT) ELSE CAST(0 AS BIT) END
+
                 statement = db_conn.prepareStatement("INSERT INTO [dbo].[Followlists] values(?,?)");
                 statement.setInt(1, user_Id);
                 statement.setInt(2, publisher_Id);
@@ -633,6 +638,37 @@ public class MainActivity extends AppCompatActivity {
 
 
             return 1;
+        }
+    }
+    // rota tanımlarını döner
+    private class RouteDcription extends AsyncTask<String, String, String> {
+        int route_id;
+        String cevap ="";
+        public RouteDcription(int route_id ){
+            this.route_id = route_id;
+        }
+
+        @Override
+        public String doInBackground(String... strings) {
+            PreparedStatement statement;
+            try {
+
+                statement = db_conn.prepareStatement("SELECT description FROM [dbo].[Route] where route_id = 1");
+                statement.setInt(1, route_id);
+                ResultSet resultSet = statement.executeQuery();
+                while (resultSet.next()) {
+
+                    cevap= resultSet.getString(1); // publisher name
+
+                }
+
+            } catch (SQLException throwables) {
+                throwables.printStackTrace();
+                return null;
+            }
+
+
+            return cevap;
         }
     }
 }
