@@ -712,4 +712,40 @@ public class MainActivity extends AppCompatActivity {
             return columns;
         }
     }
+
+    // rota tanımlarını döner
+    private class RouteWievsUpdater extends AsyncTask<String, String, String> {
+        int route_id,sayi;
+        String cevap ="";
+        Object[] columns = new Object[5];
+        public RouteWievsUpdater(int route_id ){
+            this.route_id = route_id;
+        }
+
+        @Override
+        public String doInBackground(String... strings) {
+            PreparedStatement statement;
+
+            try {
+
+                statement = db_conn.prepareStatement("Select views from [dbo].[Route] where route_id = ?");
+                statement.setInt(1, route_id);
+                ResultSet resultSet = statement.executeQuery();
+                while (resultSet.next()) {
+                    sayi= resultSet.getInt(1); // izlenme sayisi
+                }
+                statement = db_conn.prepareStatement("UPDATE SET views = ? WHERE route_id = ?");
+                statement.setInt(1, sayi+1);
+                statement.setInt(2, route_id);
+                resultSet = statement.executeQuery();
+
+            } catch (SQLException throwables) {
+                throwables.printStackTrace();
+                return null;
+            }
+
+
+            return null;
+        }
+    }
 }
