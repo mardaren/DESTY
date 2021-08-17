@@ -56,15 +56,12 @@ public class ListActivity extends AppCompatActivity {
         }
         ArrayAdapter adapter = new ArrayAdapter(this, android.R.layout.simple_list_item_1,headers);
 
-        listRoutes = (ListView) findViewById(R.id.list_routes);
+        listRoutes = findViewById(R.id.list_routes);
         listRoutes.setAdapter(adapter);
-        listRoutes.setOnItemClickListener(new AdapterView.OnItemClickListener() {
-            @Override
-            public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
-                Intent i = new Intent(context, RouteActivity.class);
-                i.putExtra("id", result.get(position));
-                startActivity(i);
-            }
+        listRoutes.setOnItemClickListener((parent, view, position, id1) -> {
+            Intent i = new Intent(context, RouteActivity.class);
+            i.putExtra("id", result.get(position));
+            startActivity(i);
         });
     }
 

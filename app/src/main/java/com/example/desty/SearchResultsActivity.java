@@ -30,13 +30,10 @@ public class SearchResultsActivity extends AppCompatActivity {
 
         listResults = (ListView) findViewById(R.id.list_results);
         listResults.setAdapter(adapter);
-        listResults.setOnItemClickListener(new AdapterView.OnItemClickListener() {
-            @Override
-            public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
-                Intent i = new Intent(context, RouteActivity.class);
-                i.putExtra("id", results.get(position));
-                startActivity(i);
-            }
+        listResults.setOnItemClickListener((parent, view, position, id) -> {
+            Intent i = new Intent(context, RouteActivity.class);
+            i.putExtra("id", results.get(position));
+            startActivity(i);
         });
     }
 

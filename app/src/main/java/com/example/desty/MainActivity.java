@@ -246,7 +246,7 @@ public class MainActivity extends AppCompatActivity {
         ArrayList<Object[]> table;
 
         public GetTen(){
-            table = new ArrayList<Object[]>();
+            table = new ArrayList<>();
         }
 
         @Override

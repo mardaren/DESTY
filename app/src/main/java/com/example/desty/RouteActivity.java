@@ -8,13 +8,11 @@ import android.view.View;
 import android.widget.Button;
 import android.widget.TextView;
 
-import java.util.ArrayList;
-
 public class RouteActivity extends AppCompatActivity {
 
     private Button buttonMap, buttonComments;
     private TextView routeName, publisherName, desc, rating;
-    private int pid;
+    private int route_id,pid;
     private Object[] route;
 
     @Override
@@ -25,49 +23,36 @@ public class RouteActivity extends AppCompatActivity {
         // ROUTE INFO
         Intent intent = getIntent();
         route = (Object[]) intent.getSerializableExtra("id");
-
-
-        routeName = (TextView) findViewById(R.id.text_routename);
-        publisherName = (TextView) findViewById(R.id.text_publisher);
-        desc = (TextView) findViewById(R.id.text_route_desc);
-        rating = (TextView) findViewById(R.id.text_rating);
+        routeName = findViewById(R.id.text_route_name);
+        publisherName = findViewById(R.id.text_publisher);
+        desc = findViewById(R.id.text_route_desc);
+        rating = findViewById(R.id.text_rating);
 
         if(route!=null) {
+            route_id = Integer.parseInt(route[0].toString());  // YANLIS ID
             pid = Integer.parseInt(route[1].toString());
             routeName.setText(route[2].toString());
             desc.setText(route[3].toString());
             rating.setText(route[4].toString());
         }
-        else{
-            //pid bizim id'ye esit olacak ******************************************************
-            pid = MainActivity.getInstance().userId;
-            rating.setText(0+"");
-        }
-        publisherName.setText(getPublisher(pid));
-
-        //ulke sehir de alinacak ***************************************************************
-
-        buttonMap = (Button) findViewById(R.id.button_map);
+        buttonMap = findViewById(R.id.button_map);
         buttonMap.setOnClickListener(v -> {
-            Intent i = new Intent(this, LocationActivity.class);
+            Intent i = new Intent(this, ShowRouteActivity.class);
+            i.putExtra("Route_ID",route_id); // YANLISSSS
             startActivity(i);
         });
 
-        buttonComments= (Button) findViewById(R.id.button_comments);
+        buttonComments= findViewById(R.id.button_comments);
         buttonComments.setOnClickListener(v -> {
             Intent i = new Intent(this, CommentsActivity.class);
             startActivity(i);
         });
+
     }
 
     public void onClickPublisher(View v){
             Intent i = new Intent(this, PublisherActivity.class);
-            System.out.println(pid);
-            i.putExtra("pid", pid + "");
+            i.putExtra("pid",pid);
             startActivity(i);
-    }
-
-    private String getPublisher(int id){
-        return MainActivity.getInstance().idToName(id);
     }
 }

@@ -14,7 +14,10 @@
         android:roundIcon="@mipmap/ic_launcher_round"
         android:supportsRtl="true"
         android:theme="@style/Theme.DESTY">
-        <activity android:name=".CommentsActivity"></activity>
+        <activity
+            android:name=".ShowRouteActivity"
+            android:exported="true" />
+        <activity android:name=".CommentsActivity" />
         <activity android:name=".PublisherActivity" />
         <activity android:name=".RouteActivity" />
         <activity android:name=".ListActivity" />
@@ -22,7 +25,7 @@
         <activity android:name=".profile.EditActivity" />
         <activity android:name=".profile.FollowListActivity" />
         <activity android:name=".profile.ListsActivity" />
-        <activity android:name=".LocationActivity" />
+        <activity android:name=".AddRouteActivity" />
         <activity android:name=".MainActivity" />
         <activity android:name=".LoginActivity" />
         <activity

@@ -52,7 +52,6 @@ import com.google.android.gms.maps.SupportMapFragment;
 import com.google.android.gms.maps.model.LatLng;
 import com.google.android.gms.maps.model.Marker;
 import com.google.android.gms.maps.model.MarkerOptions;
-import com.google.android.gms.tasks.OnCompleteListener;
 import com.google.android.gms.tasks.Task;
 
 import org.jetbrains.annotations.NotNull;
@@ -63,7 +62,6 @@ import java.sql.DriverManager;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.SQLException;
-import java.sql.SQLOutput;
 import java.sql.Statement;
 import java.util.ArrayList;
 import java.util.List;
@@ -75,7 +73,7 @@ import java.util.Locale;
  * Permission for {@link android.Manifest.permission#ACCESS_FINE_LOCATION} is requested at run
  * time. If the permission has not been granted, the Activity is finished with an error message.
  */
-public class LocationActivity extends AppCompatActivity
+public class AddRouteActivity extends AppCompatActivity
         implements
         GoogleMap.OnMapClickListener,
         OnMapReadyCallback,
@@ -107,7 +105,7 @@ public class LocationActivity extends AppCompatActivity
     private static final int DEFAULT_ZOOM = 15;
     private double longitude;
     private double latitude;
-    private static final String TAG = LocationActivity.class.getSimpleName();
+    private static final String TAG = AddRouteActivity.class.getSimpleName();
     private static final String KEY_CAMERA_POSITION = "camera_position";
     private static final String KEY_LOCATION = "location";
     private Geocoder geocoder = null;
@@ -131,14 +129,15 @@ public class LocationActivity extends AppCompatActivity
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        setContentView(R.layout.activity_location);
+        setContentView(R.layout.activity_add_route);
         menu_button = findViewById(R.id.menu_button);
         finish_route = findViewById(R.id.finish_route);
-        //Intent i = getIntent();
-        //publisher_id = i.getIntExtra("User_ID",0);
+        Intent i = getIntent();
+        publisher_id = i.getIntExtra("User_ID",0);
+        System.out.println(publisher_id);
         menu_button.setOnClickListener(v -> {
             // Initializing the popup menu and giving the reference as current context
-            PopupMenu popupMenu = new PopupMenu(LocationActivity.this, menu_button);
+            PopupMenu popupMenu = new PopupMenu(AddRouteActivity.this, menu_button);
 
             // Inflating popup menu from map_menu.xml file
             popupMenu.getMenuInflater().inflate(R.menu.map_menu, popupMenu.getMenu());
@@ -172,7 +171,7 @@ public class LocationActivity extends AppCompatActivity
             EditText route_name_view = layout.findViewById(R.id.routeName);
             EditText route_desc_view = layout.findViewById(R.id.routeDesc);
             Button  done = layout.findViewById(R.id.route_done);
-            final PopupWindow popupWindow = new PopupWindow(LocationActivity.this);
+            final PopupWindow popupWindow = new PopupWindow(AddRouteActivity.this);
             popupWindow.setContentView(layout);
             popupWindow.setFocusable(true);
             popupWindow.showAtLocation(layout , Gravity.CENTER, 0, 0);
@@ -338,27 +337,24 @@ public class LocationActivity extends AppCompatActivity
         try {
             if (locationPermissionGranted) {
                 Task<Location> locationResult = fusedLocationClient.getLastLocation();
-                locationResult.addOnCompleteListener(this, new OnCompleteListener<Location>() {
-                    @Override
-                    public void onComplete(@NonNull Task<Location> task) {
-                        if (task.isSuccessful()) {
-                            // Set the map's camera position to the current location of the device.
-                            lastKnownLocation = task.getResult();
-                            if (lastKnownLocation != null) {
-                                Log.i(TAG,"Fused location client task successful");
-                                latitude = lastKnownLocation.getLatitude();
-                                longitude =  lastKnownLocation.getLongitude();
-                                map.animateCamera(CameraUpdateFactory.newLatLngZoom(
-                                        new LatLng(lastKnownLocation.getLatitude(),
-                                                lastKnownLocation.getLongitude()), DEFAULT_ZOOM));
-                            }
-                        } else {
-                            Log.d(TAG, "Current location is null. Using defaults.");
-                            Log.e(TAG, "Exception: %s", task.getException());
-                            map.animateCamera(CameraUpdateFactory
-                                    .newLatLngZoom(defaultLocation, DEFAULT_ZOOM));
-                            map.getUiSettings().setMyLocationButtonEnabled(false);
+                locationResult.addOnCompleteListener(this, task -> {
+                    if (task.isSuccessful()) {
+                        // Set the map's camera position to the current location of the device.
+                        lastKnownLocation = task.getResult();
+                        if (lastKnownLocation != null) {
+                            Log.i(TAG,"Fused location client task successful");
+                            latitude = lastKnownLocation.getLatitude();
+                            longitude =  lastKnownLocation.getLongitude();
+                            map.animateCamera(CameraUpdateFactory.newLatLngZoom(
+                                    new LatLng(lastKnownLocation.getLatitude(),
+                                            lastKnownLocation.getLongitude()), DEFAULT_ZOOM));
                         }
+                    } else {
+                        Log.d(TAG, "Current location is null. Using defaults.");
+                        Log.e(TAG, "Exception: %s", task.getException());
+                        map.animateCamera(CameraUpdateFactory
+                                .newLatLngZoom(defaultLocation, DEFAULT_ZOOM));
+                        map.getUiSettings().setMyLocationButtonEnabled(false);
                     }
                 });
             }
@@ -382,7 +378,7 @@ public class LocationActivity extends AppCompatActivity
             EditText point_name = layout.findViewById(R.id.pointName);
             EditText point_desc = layout.findViewById(R.id.pointDesc);
             Button  done = layout.findViewById(R.id.point_done);
-            final PopupWindow popupWindow = new PopupWindow(LocationActivity.this);
+            final PopupWindow popupWindow = new PopupWindow(AddRouteActivity.this);
             popupWindow.setContentView(layout);
             popupWindow.setFocusable(true);
             popupWindow.showAtLocation(layout , Gravity.CENTER, 0, 0);

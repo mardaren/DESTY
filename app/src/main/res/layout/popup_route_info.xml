@@ -1,0 +1,68 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout
+    xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_height="wrap_content"
+    android:layout_width="wrap_content"
+    android:layout_gravity="center">
+
+    <androidx.cardview.widget.CardView
+        android:layout_width="200dp"
+        android:layout_height="wrap_content"
+        android:layout_gravity="center">
+
+        <LinearLayout
+            android:layout_gravity="center"
+            android:gravity="center"
+            android:orientation="vertical"
+            android:layout_width="match_parent"
+            android:layout_height="match_parent">
+            <TextView
+                android:textStyle="italic"
+                android:textSize="20sp"
+                android:textColor="@color/black"
+                android:id="@+id/routeName"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content" />
+            <TextView
+                android:textStyle="italic"
+                android:textSize="20sp"
+                android:textColor="@color/black"
+                android:id="@+id/routeDesc"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content" />
+            <TextView
+                android:textStyle="italic"
+                android:textSize="20sp"
+                android:textColor="@color/black"
+                android:id="@+id/routeRate"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content" />
+            <TextView
+                android:textStyle="italic"
+                android:textSize="20sp"
+                android:textColor="@color/black"
+                android:id="@+id/routeViews"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content" />
+            <TextView
+                android:textStyle="italic"
+                android:textSize="20sp"
+                android:textColor="@color/black"
+                android:id="@+id/routeCountry"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content" />
+            <TextView
+                android:textStyle="italic"
+                android:textSize="20sp"
+                android:textColor="@color/black"
+                android:id="@+id/routeCity"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content" />
+            <Button
+                android:id="@+id/info_done"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="@string/done"/>
+        </LinearLayout>
+    </androidx.cardview.widget.CardView>
+</LinearLayout>
