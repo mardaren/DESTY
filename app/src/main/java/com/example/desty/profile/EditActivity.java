@@ -34,6 +34,7 @@ public class EditActivity extends AppCompatActivity implements View.OnClickListe
             String newName = newUsername.getText().toString();
             newName = (newName.equals("New Profile Name"))?null:newName;
             String newUrl = null;
+            System.out.println(newName);
             sendQuery(newName,newUrl);
         });
     }

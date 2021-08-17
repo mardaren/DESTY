@@ -639,21 +639,32 @@ public class MainActivity extends AppCompatActivity {
 
             try {
                 if (name != null && foto != null){
+                    System.out.println("burada1");
                     statement = db_conn.prepareStatement("UPDATE [dbo].[User] SET username = ?, photo_url = ? WHERE id  = ?" );
                     statement.setString(1, this.name);
                     statement.setString(2, this.foto);
                     statement.setInt(3, userId);
                 }
                 else if (foto != null){
+                    System.out.println("burada2");
                     statement = db_conn.prepareStatement("UPDATE [dbo].[User] SET  photo_url = ? WHERE id  = ?" );
                     statement.setString(1, this.foto);
                     statement.setInt(2, userId);
                 }
                 else if (name != null) {
+                    System.out.println("burada3");
                     statement = db_conn.prepareStatement("UPDATE [dbo].[User] SET username = ? WHERE id  = ?");
                     statement.setString(1, this.name);
                     statement.setInt(2, userId);
                 }
+                else{
+                    System.out.println("burada");
+                    statement = null;
+                }
+                ResultSet resultSet = statement.executeQuery();
+                /*while (resultSet.next()){
+                    int d = resultSet.getInt(1);
+                }*/
             } catch (SQLException throwables) {
                 throwables.printStackTrace();
             }
