@@ -177,6 +177,11 @@ public class LoginActivity extends AppCompatActivity {
                 statement = db_conn.prepareStatement(query);
                 statement.setString(1, name);
                 ResultSet resultSet = statement.executeQuery();
+                if (!resultSet.isBeforeFirst() ) { // in case no user name found
+                    check=false;
+                    return null;
+                }
+
                 while (resultSet.next()) {
                     columns[0] = resultSet.getInt(1);
                     columns[1] = resultSet.getString(2);
