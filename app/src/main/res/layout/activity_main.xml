@@ -18,12 +18,15 @@
             android:textColor="@color/white"
             android:gravity="center"
             android:minHeight="?actionBarSize"
+            android:textSize="23dp"
             android:padding="@dimen/appbar_padding"
             android:text="@string/app_name"
             android:textAppearance="@style/TextAppearance.Widget.AppCompat.Toolbar.Title" />
 
         <com.google.android.material.tabs.TabLayout
             android:id="@+id/tabs"
+            app:tabSelectedTextColor="@color/purple_selected"
+            app:tabTextColor="@color/white"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:background="?attr/colorPrimary" />

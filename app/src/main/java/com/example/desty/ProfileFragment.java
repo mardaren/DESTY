@@ -40,7 +40,7 @@ public class ProfileFragment extends Fragment {
         profileName = (TextView) view.findViewById(R.id.text_profilename);
         imageProfile = (ImageView) view.findViewById(R.id.image_profile);
         String[] profileInfo = ((MainActivity) requireActivity()).getUserInfo();
-        profileName.setText(profileInfo[0]);
+        profileName.setText("Merhaba, " + profileInfo[0]);
         // eksik*******************************************************************
         //imageProfile.setImage();
 
