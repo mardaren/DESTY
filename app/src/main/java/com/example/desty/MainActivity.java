@@ -40,6 +40,7 @@ public class MainActivity extends AppCompatActivity {
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         userId =getIntent().getIntExtra("UserId",1);
+
         try {
             Connection b = new Connect().execute().get();
         } catch (ExecutionException e) {
@@ -743,5 +744,40 @@ public class MainActivity extends AppCompatActivity {
         }
     }
 
+    // rota tanımlarını döner
+    private class RouteComment extends AsyncTask<String, String, Object[]> {
+        int route_id;
+        String cevap ="";
+        Object[] columns = new Object[5];
+        public RouteComment(int route_id ){
+            this.route_id = route_id;
+        }
 
+        @Override
+        public Object[] doInBackground(String... strings) {
+            PreparedStatement statement;
+
+            try {
+
+                statement = db_conn.prepareStatement("select * from comment where route_id = ?");
+                statement.setInt(1, route_id);
+                ResultSet resultSet = statement.executeQuery();
+                while (resultSet.next()) {
+                    columns[0]= resultSet.getInt(1); // comment id
+                    columns[1]= resultSet.getInt(2); // user id
+                    columns[2]= resultSet.getInt(3); // rota id
+                    columns[3]= resultSet.getInt(4); // stars
+                    columns[4]= resultSet.getString(5); // coment
+
+                }
+
+            } catch (SQLException throwables) {
+                throwables.printStackTrace();
+                return null;
+            }
+
+
+            return columns;
+        }
+    }
 }

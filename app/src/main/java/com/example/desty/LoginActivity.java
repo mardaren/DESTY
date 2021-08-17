@@ -98,6 +98,7 @@ public class LoginActivity extends AppCompatActivity {
         boolean check=false;
         @Override
         public String doInBackground(String ... strings){
+            int id = 0;
             byte[] salt = null;
             try {
                 salt=getSalt();
@@ -116,7 +117,7 @@ public class LoginActivity extends AppCompatActivity {
             try {
                 statement = db_conn.createStatement();
                 ResultSet resultSet = statement.executeQuery(query);
-                int id = 0;
+
                 while(resultSet.next()){
                     id = resultSet.getInt(1);
                 }
@@ -135,6 +136,7 @@ public class LoginActivity extends AppCompatActivity {
             if (status>0){
                 check = true;
                 Intent i = new Intent(LoginActivity.this,MainActivity.class);
+                i.putExtra("UserId", id);
                 try {
                     db_conn.close();
                 } catch (SQLException throwables) {
@@ -194,6 +196,7 @@ public class LoginActivity extends AppCompatActivity {
             if (result) {
                 check = true;
                 Intent i = new Intent(LoginActivity.this, MainActivity.class);
+                i.putExtra("UserId", (int)columns[0]);
                 try {
                     db_conn.close();
                 } catch (SQLException throwables) {
