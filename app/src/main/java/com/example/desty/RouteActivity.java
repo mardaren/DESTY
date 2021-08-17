@@ -10,8 +10,8 @@ import android.widget.TextView;
 
 public class RouteActivity extends AppCompatActivity {
 
-    private Button buttonMap, buttonComments;
-    private TextView routeName, publisherName, desc, rating;
+    private Button buttonMap, buttonComments, buttonAdd;
+    private TextView routeName, publisherName, desc, rating, location;
     private int route_id,pid;
     private Object[] route;
 
@@ -27,25 +27,35 @@ public class RouteActivity extends AppCompatActivity {
         publisherName = findViewById(R.id.text_publisher);
         desc = findViewById(R.id.text_route_desc);
         rating = findViewById(R.id.text_rating);
+        location = findViewById(R.id.text_location);
 
-        if(route!=null) {
-            route_id = Integer.parseInt(route[0].toString());  // YANLIS ID
-            pid = Integer.parseInt(route[1].toString());
-            routeName.setText(route[2].toString());
-            desc.setText(route[3].toString());
-            rating.setText(route[4].toString());
-        }
+
+        route_id = Integer.parseInt(route[0].toString());  // YANLIS ID
+        pid = Integer.parseInt(route[1].toString());
+        routeName.setText(route[2].toString());
+        desc.setText(route[3].toString());
+        rating.setText(route[4].toString());
+        // hatalı
+        publisherName.setText(route[1].toString());
+        //hatali nullsa
+        location.setText(route[6].toString().replace(" ","") + "/" + route[7].toString().replace(" ",""));
+        //}
         buttonMap = findViewById(R.id.button_map);
         buttonMap.setOnClickListener(v -> {
             Intent i = new Intent(this, ShowRouteActivity.class);
+            System.out.println(route_id);
             i.putExtra("Route_ID",route_id); // YANLISSSS
             startActivity(i);
         });
 
-        buttonComments= findViewById(R.id.button_comments);
+        buttonComments = findViewById(R.id.button_comments);
         buttonComments.setOnClickListener(v -> {
             Intent i = new Intent(this, CommentsActivity.class);
             startActivity(i);
+        });
+
+        buttonAdd = findViewById(R.id.button_addto_list);
+        buttonAdd.setOnClickListener(v -> {
         });
 
     }

@@ -20,6 +20,7 @@ public class ListActivity extends AppCompatActivity {
     private ArrayList<Object[]> result;
     private Context context;
     private int listId;
+    private String pubId;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -31,7 +32,7 @@ public class ListActivity extends AppCompatActivity {
         ///dinamik olmalı
         Bundle bundle = getIntent().getExtras();
         String mode = "";
-        String id = "";
+
 
         if(bundle != null){
             mode = bundle.getString("mode");
@@ -42,13 +43,14 @@ public class ListActivity extends AppCompatActivity {
         }
         else if (mode.equals("publisher")){
             System.out.println("pub");
-            id = bundle.getString("pid");
+            pubId = bundle.getString("pid");
 
-            headers = getPublisherRoutes(Integer.parseInt(id));
+            headers = getPublisherRoutes(Integer.parseInt(pubId));
             System.out.println(headers.toString());
         }
         else if (mode.equals("user")){
             listId = Integer.parseInt(bundle.getString("listId"));
+            pubId = MainActivity.getInstance().userId + "";
             headers = getRoutes();
         }
         else {
