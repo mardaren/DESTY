@@ -281,6 +281,14 @@ public class MainActivity extends AppCompatActivity {
         String countryName,cityName,tag;
         ArrayList<Object[]> table;
 
+        public AllSearch(String countryName,String cityName,String tag){
+            this.countryName = countryName;
+            this.cityName = cityName;
+            this.tag = tag;
+            this.table = new ArrayList<Object[]>();
+            System.out.println(countryName+cityName+tag);
+        }
+
         @Override
         protected String doInBackground(String... strings) {
             PreparedStatement statement;
@@ -307,8 +315,8 @@ public class MainActivity extends AppCompatActivity {
                     statement.setString(1, countryName+"%");
                     statement.setString(2, tag+"%");
                 }
-                else if(countryName != null){
-                    query = "SELECT * FROM [dbo].[Route] WHERE country like ? ";
+                else if (countryName != null){
+                    query = "SELECT * FROM [dbo].[Route] WHERE country like ?";
                     statement = db_conn.prepareStatement(query);
                     statement.setString(1, countryName+"%");
                 }
@@ -318,11 +326,12 @@ public class MainActivity extends AppCompatActivity {
                     statement.setString(1, tag+"%");
                 }
                 else {
+                    System.out.println("burada");
                     return null;
                 }
                 resultSet = statement.executeQuery();
-                Object[] tuple = new Object[8];
                 while (resultSet.next()) {
+                    Object[] tuple = new Object[8];
                     tuple[0] = resultSet.getInt(1);
                     tuple[1] = resultSet.getInt(2);
                     tuple[2] = resultSet.getString(3);
@@ -344,12 +353,7 @@ public class MainActivity extends AppCompatActivity {
             super.onPostExecute(s);
         }
 
-        public AllSearch(String countryName,String cityName,String tag){
-            this.countryName = countryName;
-            this.cityName = cityName;
-            this.tag = tag;
-            this.table = new ArrayList<Object[]>();
-        }
+
     }
 
     private class UserInfo extends AsyncTask<String, String, String> {
@@ -715,7 +719,7 @@ public class MainActivity extends AppCompatActivity {
         }
     }
 
-    // fallowa publisher ekleme
+    // followa publisher ekleme
     private class FollowPublisher extends AsyncTask<String, String, Integer> {
         int user_Id,publisher_Id;
 

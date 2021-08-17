@@ -27,7 +27,7 @@ import java.util.Map;
 import java.util.Objects;
 import java.util.concurrent.ConcurrentMap;
 
-public class SearchFragment extends Fragment{
+public class SearchFragment extends Fragment implements View.OnClickListener {
 
     private String Keyword="", Country="", City="";
     private HashMap<String,String[]> citiesCountries = new HashMap<>();
@@ -47,6 +47,7 @@ public class SearchFragment extends Fragment{
         super.onViewCreated(view, savedInstanceState);
         // keyword
         editText_keyword = view.findViewById(R.id.editKeyword);
+        editText_keyword.setOnClickListener(this);
 
         // fill **** GELISTIRILEBILIR ****
         String[] countries = {"Country", "United States", "Turkey"};
@@ -84,12 +85,18 @@ public class SearchFragment extends Fragment{
     private ArrayList<Object[]> sendQuery(){
         String key,countryName,cityName;
         key = "" + editText_keyword.getText();
-        key = (key.equals(""))?null:key;
-        countryName = (Country.equals(""))?null:Country;
+        key = (key.equals("Keyword")||key.equals(""))?null:key;
+        countryName = (Country.equals("")||Country.equals("Country"))?null:Country;
         cityName = (City.equals("") || City.equals("City") || City.equals("City - Select Country"))?null:City;
 
+        System.out.println(key+" "+countryName+" "+cityName);
         result = ((MainActivity) requireActivity()).search(countryName,cityName,key);
         return result;
+    }
+
+    @Override
+    public void onClick(View v) {
+        editText_keyword.setText("");
     }
 
     private class PSpinner {
@@ -123,7 +130,7 @@ public class SearchFragment extends Fragment{
             adapter = new ArrayAdapter<String>(getContext(),layout_id, array){
                 @Override
                 public boolean isEnabled(int position){
-                    return position != 0;
+                    return true;
                 }
                 @Override
                 public View getDropDownView(int position, View convertView,
