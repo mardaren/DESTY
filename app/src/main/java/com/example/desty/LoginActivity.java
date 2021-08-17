@@ -122,12 +122,13 @@ public class LoginActivity extends AppCompatActivity {
                     id = resultSet.getInt(1);
                 }
                 id++;
-                PreparedStatement insertSt=db_conn.prepareStatement("INSERT INTO [dbo].[User] values(?,?,?,?,?)");
+                PreparedStatement insertSt=db_conn.prepareStatement("INSERT INTO [dbo].[User] values(?,?,?,?,?,?)");
                 insertSt.setObject(1,id);
                 insertSt.setObject(2,name);
                 insertSt.setObject(3,mail);
                 insertSt.setObject(4,str_passwd);
                 insertSt.setObject(5,str_salt);
+                insertSt.setObject(6,""); // photo url
                 status = insertSt.executeUpdate();
             } catch (SQLException throwables) {
                 throwables.printStackTrace();
@@ -171,7 +172,7 @@ public class LoginActivity extends AppCompatActivity {
         protected String doInBackground(String... strings) {
             PreparedStatement statement;
             String query = "SELECT * FROM [dbo].[User] WHERE username = ?";
-            Object[] columns = new Object[5]; // User table columns
+            Object[] columns = new Object[6]; // User table columns
             try {
                 statement = db_conn.prepareStatement(query);
                 statement.setString(1, name);
@@ -182,6 +183,7 @@ public class LoginActivity extends AppCompatActivity {
                     columns[2] = resultSet.getString(3);
                     columns[3] = resultSet.getString(4);
                     columns[4] = resultSet.getString(5);
+                    columns[5] = resultSet.getString(6);
                 }
             } catch (SQLException throwables) {
                 throwables.printStackTrace();
