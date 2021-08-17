@@ -23,30 +23,18 @@ public class PublisherActivity extends AppCompatActivity {
 
         // PUBLISHER INFO
         Intent intent = getIntent();
-        id = Integer.parseInt((String) intent.getSerializableExtra("pid"));
+        id = intent.getIntExtra("pid",0);
         info = getPubInfo();
-        /*
-        for(Object a: info){
-            if(a==null){
-                System.out.print("null" +  "-");
-            }
-            else{
-                System.out.print(a.toString() +  "-");
-            }
-        }
-        System.out.println();*/
-
-        //
-        pubName = (TextView) findViewById(R.id.text_publishername);
+        pubName = findViewById(R.id.text_publisher_name);
         pubName.setText(info[1].toString());
 
-        rating = (TextView) findViewById(R.id.text_rating_publisher);
+        rating = findViewById(R.id.text_rating_publisher);
         rating.setText(info[5].toString());
 
-        bio = (TextView) findViewById(R.id.text_bio);
+        bio = findViewById(R.id.text_bio);
         bio.setText(info[4].toString());
 
-        imgPublisher = (ImageView) findViewById(R.id.image_publisher);
+        imgPublisher = findViewById(R.id.image_publisher);
         String url;
         if (info[3] == null){
 
@@ -56,7 +44,7 @@ public class PublisherActivity extends AppCompatActivity {
         }
 
         //button
-        buttonRoutes= (Button) findViewById(R.id.button_publisherroutes);
+        buttonRoutes= findViewById(R.id.button_publisher_routes);
         buttonRoutes.setOnClickListener(v -> {
             Intent i = new Intent(this, ListActivity.class);
             i.putExtra("mode","publisher");

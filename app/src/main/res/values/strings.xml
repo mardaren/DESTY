@@ -45,6 +45,34 @@
     <string name="comments">Comments</string>
     <string name="show_in_map">Show In Map</string>
     <string name="show_route_info">Show Route Info</string>
+
+    <!--    Profile-->
+    <string name="apply">Apply</string>
+    <string name="changeImg">Change Image</string>
+    <string name="new_name">New Profile Name</string>
+    <string name="edit_profile">Edit Profile</string>
+    <string name="name">Profile Name</string>
+    <string name="routes">My Routes</string>
+
+<!--    FollowList-->
+    <string name="follow_list">Follow List</string>
+
+<!--    Lists-->
+    <string name="lists">Lists</string>
+
+<!--    Search-->
+    <string name="search_keyword">Keyword</string>
+    <string name="search">Search</string>
+    <string name="search_res">Search Results</string>
+
+<!--    Publisher Info-->
+    <string name="publisher_name">Publisher Name</string>
+    <string name="follow_publisher">Follow Publisher</string>
+    <string name="bio">Bio</string>
+    <string name="publisher_routes">Publisher Routes</string>
+
+<!--    Comments-->
+
     <string-array name="den">
         <item>United States</item>
         <item>Turkey</item>

@@ -2,6 +2,7 @@
 <androidx.constraintlayout.widget.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
+    android:background="@color/purple_200"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     tools:context=".PublisherActivity">
@@ -17,34 +18,36 @@
         tools:srcCompat="@tools:sample/avatars" />
 
     <TextView
-        android:id="@+id/text_publishername"
+        android:textStyle="bold"
+        android:id="@+id/text_publisher_name"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_marginTop="40dp"
-        android:text="Publisher Name"
-        android:textSize="26dp"
+        android:text="@string/publisher_name"
+        android:textSize="26sp"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintHorizontal_bias="0.497"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toBottomOf="@+id/image_publisher" />
 
     <TextView
+        android:textStyle="bold"
         android:id="@+id/text_rating_publisher"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_marginTop="40dp"
-        android:text="Rating"
-        android:textSize="20dp"
+        android:text="@string/rating"
+        android:textSize="20sp"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/text_publishername" />
+        app:layout_constraintTop_toBottomOf="@+id/text_publisher_name" />
 
     <Button
-        android:id="@+id/button_publisherroutes"
+        android:id="@+id/button_publisher_routes"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_marginTop="48dp"
-        android:text="   ROUTES   "
+        android:text="@string/publisher_routes"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintHorizontal_bias="0.487"
         app:layout_constraintStart_toStartOf="parent"
@@ -64,15 +67,12 @@
             android:orientation="vertical">
 
             <TextView
+                android:gravity="center"
+                android:textAlignment="center"
                 android:id="@+id/text_bio"
                 android:layout_width="match_parent"
                 android:layout_height="match_parent"
-                android:text="Bio Bio Bio Bio Bio Bio Bio Bio Bio Bio Bio Bio Bio Bio Bio Bio
-Bio Bio Bio Bio Bio Bio Bio Bio
-Bio Bio Bio BioBio Bio Bio BioBio Bio Bio BioBio Bio Bio BioBio Bio Bio Bio
-Bio Bio Bio BioBio Bio Bio BioBio Bio Bio BioBio Bio Bio Bio
-Bio Bio Bio BioBio Bio Bio BioBio Bio Bio BioBio Bio Bio Bio
-Bio Bio Bio BioBio Bio Bio BioBio Bio Bio Bio" />
+                android:text="@string/bio"/>
         </LinearLayout>
     </ScrollView>
 
@@ -81,11 +81,11 @@ Bio Bio Bio BioBio Bio Bio BioBio Bio Bio Bio" />
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_marginTop="36dp"
-        android:text="follow"
+        android:text="@string/follow_publisher"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintHorizontal_bias="0.498"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/button_publisherroutes"
+        app:layout_constraintTop_toBottomOf="@+id/button_publisher_routes"
         app:layout_constraintVertical_bias="0.0" />
 </androidx.constraintlayout.widget.ConstraintLayout>

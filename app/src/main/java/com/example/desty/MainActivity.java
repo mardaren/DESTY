@@ -704,9 +704,9 @@ public class MainActivity extends AppCompatActivity {
                     columns[0] = resultSet.getInt(1); // publisher id
                     columns[1] = resultSet.getString(2); // publisher name
                     columns[2] = resultSet.getString(3); // user mail
-                    columns[3] = resultSet.getString(6); // foto urls
+                    columns[3] = resultSet.getString(6); // photo urls
                     columns[4] = resultSet.getString(8); // bio
-                    columns[5] = resultSet.getInt(9); // raiting
+                    columns[5] = resultSet.getInt(9); // rating
                 }
             } catch (SQLException throwables) {
                 throwables.printStackTrace();

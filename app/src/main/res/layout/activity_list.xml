@@ -7,6 +7,9 @@
     tools:context=".ListActivity">
 
     <ListView
+        android:divider="@color/black"
+        android:dividerHeight="2sp"
+        android:background="@color/purple_200"
         android:id="@+id/list_routes"
         android:layout_width="409dp"
         android:layout_height="729dp"
