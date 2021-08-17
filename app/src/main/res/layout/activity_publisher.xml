@@ -15,7 +15,7 @@
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toTopOf="parent"
-        tools:srcCompat="@tools:sample/avatars" />
+        android:src="@drawable/profile" />
 
     <TextView
         android:textStyle="bold"
@@ -57,6 +57,7 @@
         android:id="@+id/scrollView3"
         android:layout_width="409dp"
         android:layout_height="120dp"
+        android:background="@color/quantum_grey400"
         android:layout_marginTop="24dp"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toBottomOf="@+id/text_rating_publisher">
@@ -70,6 +71,7 @@
                 android:gravity="center"
                 android:textAlignment="center"
                 android:id="@+id/text_bio"
+
                 android:layout_width="match_parent"
                 android:layout_height="match_parent"
                 android:text="@string/bio"/>

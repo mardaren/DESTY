@@ -12,7 +12,8 @@ public class RouteActivity extends AppCompatActivity {
 
     private Button buttonMap, buttonComments, buttonAdd;
     private TextView routeName, publisherName, desc, rating, location;
-    private int route_id,pid;
+    private int pid;
+    private String route_id;
     private Object[] route;
 
     @Override
@@ -30,15 +31,16 @@ public class RouteActivity extends AppCompatActivity {
         location = findViewById(R.id.text_location);
 
 
-        route_id = Integer.parseInt(route[0].toString());
+        route_id = route[0].toString();
         pid = Integer.parseInt(route[1].toString());
         routeName.setText(route[2].toString());
         desc.setText(route[3].toString());
-        rating.setText(route[4].toString());
+        rating.setText("Rating: "+route[4].toString());
 
         String name = MainActivity.getInstance().idToName(pid);
         publisherName.setText(name);
         String location_str = route[6] + "/" + route[7];
+        location_str = location_str.replace(" ","");
         location.setText(location_str);
 
         buttonMap = findViewById(R.id.button_map);
@@ -63,7 +65,7 @@ public class RouteActivity extends AppCompatActivity {
 
     public void onClickPublisher(View v){
             Intent i = new Intent(this, PublisherActivity.class);
-            i.putExtra("pid",pid);
+            i.putExtra("pid",pid+"");
             startActivity(i);
     }
 }

@@ -23,13 +23,13 @@ public class PublisherActivity extends AppCompatActivity {
 
         // PUBLISHER INFO
         Intent intent = getIntent();
-        id = intent.getIntExtra("pid",0);
+        id = Integer.parseInt((String) intent.getSerializableExtra("pid"));
         info = getPubInfo();
         pubName = findViewById(R.id.text_publisher_name);
         pubName.setText(info[1].toString());
 
         rating = findViewById(R.id.text_rating_publisher);
-        rating.setText(info[5].toString());
+        rating.setText("Rating: " + info[5].toString());
 
         bio = findViewById(R.id.text_bio);
         bio.setText(info[4].toString());
