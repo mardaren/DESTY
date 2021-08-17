@@ -110,60 +110,65 @@ public class MainActivity extends AppCompatActivity {
     }
 
     private class AllSearch extends AsyncTask<String, String, String> {
-        String countryName, cityName, tag;
+        String countryName, cityName, tag,name;
         ArrayList<Object[]> table = new ArrayList<>();
-
+        //SELECT * FROM [dbo].[Route] inner join [dbo].[Tag] on tag_route_id = route_id WHERE (country like ? and city like ? )and (route_name like ?  or tag_content = ?)
         @Override
         protected String doInBackground(String... strings) {
             PreparedStatement statement;
             ResultSet resultSet;
             String query;
             try {
-                if (countryName != null && cityName != null && tag != null) {
-                    query = "SELECT * FROM [dbo].[Route] WHERE country like ? and city like ? and route_name like ?";
+                if (countryName != null && cityName != null && name != null) {
+                    query = "SELECT * FROM [dbo].[Route] inner join [dbo].[Tag] on tag_route_id = route_id WHERE (country like ? and city like ? )and (route_name like ?  or tag_content = ?) ";
                     statement = db_conn.prepareStatement(query);
-                    statement.setString(1, countryName + "%");
-                    statement.setString(2, cityName + "%");
-                    statement.setString(3, tag + "%");
+                    statement.setString(1, "%" + countryName + "%");
+                    statement.setString(2, "%" + cityName + "%");
+                    statement.setString(3, "%" + name + "%");
+                    statement.setString(4, "%" + name + "%");
                 } else if (countryName != null && cityName != null) {
                     query = "SELECT * FROM [dbo].[Route] WHERE country like ? and city like ? ";
                     statement = db_conn.prepareStatement(query);
-                    statement.setString(1, countryName + "%");
-                    statement.setString(2, cityName + "%");
-                } else if (countryName != null && tag != null) {
-                    query = "SELECT * FROM [dbo].[Route] WHERE country like ? and route_name like ?";
+                    statement.setString(1, "%" + countryName + "%");
+                    statement.setString(2, "%" + cityName + "%");
+                } else if (countryName != null && name != null) {
+                    query = "SELECT * FROM [dbo].[Route] inner join [dbo].[Tag] on tag_route_id = route_id WHERE (country like ? )and (route_name like ?  or tag_content = ?) ";
                     statement = db_conn.prepareStatement(query);
-                    statement.setString(1, countryName + "%");
-                    statement.setString(2, tag + "%");
-                } else if (cityName != null && tag != null) {
-                    query = "SELECT * FROM [dbo].[Route] WHERE  city like ? and route_name like ?";
+                    statement.setString(1, "%" + countryName + "%");
+                    statement.setString(2, "%" + name + "%");
+                    statement.setString(3, "%" + name + "%");
+                } else if (cityName != null && name != null) {
+                    query = "SELECT * FROM [dbo].[Route] inner join [dbo].[Tag] on tag_route_id = route_id WHERE (city like ? )and (route_name like ?  or tag_content = ?) ";
                     statement = db_conn.prepareStatement(query);
-                    statement.setString(1, cityName + "%");
-                    statement.setString(2, tag + "%");
+                    statement.setString(1, "%" + cityName + "%");
+                    statement.setString(2, "%" + name + "%");
+                    statement.setString(3, "%" + name + "%");
+
                 } else if (countryName != null) {
-                    query = "SELECT * FROM [dbo].[Route] WHERE country like ? ";
+                    query = "SELECT * FROM [dbo].[Route] inner join [dbo].[Tag] on tag_route_id = route_id WHERE (country like ? ) ";
                     statement = db_conn.prepareStatement(query);
-                    statement.setString(1, countryName + "%");
+                    statement.setString(1, "%" + countryName + "%");
                 } else if (cityName != null) {
-                    query = "SELECT * FROM [dbo].[Route] WHERE city like ? ";
+                    query = "SELECT * FROM [dbo].[Route] inner join [dbo].[Tag] on tag_route_id = route_id WHERE city like ? ";
                     statement = db_conn.prepareStatement(query);
-                    statement.setString(1, cityName + "%");
+                    statement.setString(1, "%" + cityName + "%");
                 } else {
-                    query = "SELECT * FROM [dbo].[Route] WHERE route_name like ?";
+                    query = "SELECT * FROM [dbo].[Route] inner join [dbo].[Tag] on tag_route_id = route_id WHERE (route_name like ?  or tag_content = ?) ";
                     statement = db_conn.prepareStatement(query);
-                    statement.setString(1, tag + "%");
+                    statement.setString(1, "%" + name + "%");
+                    statement.setString(2, "%" + name + "%");
                 }
                 resultSet = statement.executeQuery();
                 Object[] tuple = new Object[8];
                 while (resultSet.next()) {
-                    tuple[0] = resultSet.getInt(1);
-                    tuple[1] = resultSet.getInt(2);
-                    tuple[2] = resultSet.getString(3);
-                    tuple[3] = resultSet.getString(4);
-                    tuple[4] = resultSet.getFloat(5);
-                    tuple[5] = resultSet.getBigDecimal(6);
-                    tuple[6] = resultSet.getString(7);
-                    tuple[7] = resultSet.getString(8);
+                    tuple[0] = resultSet.getInt(1); // rota id
+                    tuple[1] = resultSet.getInt(2); // publisher id
+                    tuple[2] = resultSet.getString(3); // rota name
+                    tuple[3] = resultSet.getString(4); //rota tanımı
+                    tuple[4] = resultSet.getFloat(5); // rating
+                    tuple[5] = resultSet.getBigDecimal(6); // izlenme sayısı
+                    tuple[6] = resultSet.getString(7); // ülke
+                    tuple[7] = resultSet.getString(8); // şehir
                     table.add(tuple);
                 }
             } catch (SQLException throwables) {
@@ -173,10 +178,10 @@ public class MainActivity extends AppCompatActivity {
             return null;
         }
 
-        public AllSearch(String countryName, String cityName, String tag) {
+        public AllSearch(String countryName, String cityName, String name) {
             this.countryName = countryName;
             this.cityName = cityName;
-            this.tag = tag;
+            this.name = name;
         }
     }
 
